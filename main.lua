@@ -1,4 +1,5 @@
 classer = require "classer"
+maze = require "maze"
 
 debug = true
 
@@ -7,6 +8,10 @@ player = { x = 32, y = 64, speed = 150, img = nil }
 -- Game starts
 function love.load(arg)
 	player.img = love.graphics.newImage("assets/images/player.png")
+	path = "assets/mazes/level1.lua"
+
+	local level = love.filesystem.load(path)()
+	print(level:get())
 end
 
 -- Every frame
