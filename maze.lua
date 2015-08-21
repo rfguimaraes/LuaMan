@@ -34,8 +34,12 @@ function maze.Maze:_init(tileW, tileH, imgFile, tileString, quadInfo)
 	self.height = y - 1
 end
 
-function maze.Maze:get()
-	return self.height
+function maze.Maze:draw()
+	for x, column in ipairs(self.tileTable) do
+		for y, char in ipairs(column) do
+			love.graphics.draw(self.tileset, self.quads[char], (x - 1)*self.tileW, (y - 1)*self.tileH)
+		end
+	end
 end
 
 return maze
