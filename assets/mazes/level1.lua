@@ -3,9 +3,9 @@ maze = require "maze"
 local tileString = [[
 #####
 #   #
+##  #
 #   #
-#   #
-#####
+####
 ]]
 
 local quadInfo = 
