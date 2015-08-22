@@ -1,33 +1,42 @@
-require "classer"
+classer = require "classer"
+anim8 = require "anim8"
 
 local player = {}
 
 player.Player = classer.ncls()
 
-directions = {["RIGHT"] = 0, ["DOwN"] = 90, ["LEFT"] = 180, ["UP"] = 270}
+player.rots = 
+	{["RIGHT"] = math.rad(0),
+	  ["DOWN"] = math.rad(90), 
+	  ["LEFT"] = math.rad(180), 
+		["UP"] = math.rad(270)}
 
 function player.Player:_init(tileW, tileH, x, y, speed, imgFile)
 	self.tileW, self.tileH = tileW, tileH
 	self.x, self.y = x, y
 	self.speed = speed
 	self.tileset = love.graphics.newImage(imgFile)
-	self.dir = "RIGHT"
+	self.dir = "UP"
 
 	local tilesetH = self.tileset:getHeight()
 	local tilesetW = self.tileset:getWidth()
+	local grid = anim8.newGrid(32,32,tilesetW,tilesetH)
 
-	rows = tilesetH/tileH
-	cols = tilesetW/tileW
+	local walkFrames = grid('1-4',1, '3-1', 1)
+	self.walkAnim = anim8.newAnimation(walkFrames, 0.05)
+end
 
-	walkAnim = {1,2,3,4}
+function player.Player:update(dt)
+	self.walkAnim:update(dt)
+end
 
-	self.quads = {}
-	for x = 1,rows do
-		for y = 1,cols do
-			quad = love.graphics.newQuad((x - 1)*tileW, (y - 1)*tileH, tileW, tileH, tilesetW, tilesetH)
-			self.quads[(x - 1) * cols + y] = quad
-		end
-	end
+function player.Player:draw(dt)
+	angle = player.rots[self.dir]
+	ox = self.tileW/2
+	oy = self.tileH/2
+	self.walkAnim:draw(self.tileset, self.x, self.y, angle, 1, 1, ox, oy)
+	table.foreach(player.rots, print)
+	print(angle)
 end
 
 return player

@@ -24,7 +24,7 @@ function maze.Maze:_init(tileW, tileH, imgFile, tileString, quadInfo)
 	self.height = select(2, tileString:gsub('\n', '\n'))
 	self.tileBatch = love.graphics.newSpriteBatch(self.tileset, self.width * self.height)
 	for x = 1,self.width,1 do self.tileTable[x] = {} end
-	self.tb:clear()
+	self.tileBatch:clear()
 	local x, y = 1,1
 	for row in tileString:gmatch("[^\n]+") do
 		x = 1
@@ -35,7 +35,7 @@ function maze.Maze:_init(tileW, tileH, imgFile, tileString, quadInfo)
 		end
 		y = y + 1
 	end
-	self.tb:flush()
+	self.tileBatch:flush()
 end
 
 function maze.Maze:draw()
