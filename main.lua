@@ -12,7 +12,7 @@ function love.load(arg)
 	path = "assets/mazes/level1.lua"
 	level = love.filesystem.load(path)()
 
-	luaman = player.Player(32, 32,16, 48, 1, "assets/images/player.png")
+	luaman = player.Player(32, 32, 16, 48, 40, "assets/images/player.png")
 end
 
 -- Every frame
@@ -20,14 +20,13 @@ function love.update(dt)
 	if love.keyboard.isDown('escape') then
 		love.event.push('quit')
 	end
-
+	luaman:update(dt)
 	--if love.keyboard.isDown('left','a') then
 	--	player.x = player.x - (player.speed*dt)
 	--elseif love.keyboard.isDown('right','d') then
 	--	player.x = player.x + (player.speed*dt)
 	--end
 
-	luaman:update(dt)
 end
 
 -- Every frame
