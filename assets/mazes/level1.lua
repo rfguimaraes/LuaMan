@@ -6,7 +6,7 @@ local tileString = [[
 #  ## ##  #
 #  ##.##  #
 #  #####  #
-#         #
+#    #    #
 ###########
 ]]
 
@@ -18,4 +18,4 @@ local quadInfo =
 	{ 's',  0, 0 }, -- floor, start
 }
 
-return maze.Maze(32,32,'assets/images/maze.png', tileString, quadInfo)
+return {tileString = tileString, quadInfo = quadInfo}

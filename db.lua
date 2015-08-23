@@ -1,0 +1,29 @@
+maze = require "maze"
+
+local db = {}
+
+function db.load()
+	db.loadImages()
+	db.loadMazes()
+end
+
+function db.loadImages()
+	local imgPath = "assets/images/"
+	db.img  = 
+	{
+		player = love.graphics.newImage(imgPath.."player.png"),
+		maze = love.graphics.newImage(imgPath.."maze.png")
+	}
+end
+
+function db.loadMazes()
+	local mazePath = "assets/mazes/"
+	local data1 = love.filesystem.load(mazePath.."level1.lua")()
+	db.lvl =
+	{
+		maze.Maze(32,32,db.img.maze, data1.tileString, data1.quadInfo)	
+	}
+end
+	
+
+return db

@@ -3,6 +3,7 @@ maze = require "maze"
 player = require "player"
 bump = require "bump"
 debug = true
+db = require "db"
 
 luaman = nil
 level = nil
@@ -11,11 +12,11 @@ mycoins = nil
 
 -- Game starts
 function love.load(arg)
-	path = "assets/mazes/level1.lua"
-	level = love.filesystem.load(path)()
+	db.load()
+	level = db.lvl[1]
 	mycoins = level:toWorld(scene)
 
-	luaman = player.Player(scene, level,32, 32, 32, 32, 90, "assets/images/player.png")
+	luaman = player.Player(scene, level,32, 32, 32, 32, 90, db.img.player)
 	local items, len = scene:getItems()
 end
 

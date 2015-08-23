@@ -16,7 +16,7 @@ player.dirs =
 	  ["LEFT"] = {x = -1, y = 0}, 
 		["UP"] = {x = 0, y = -1}}
 
-function player.Player:_init(world, level, tileW, tileH, x, y, speed, imgFile)
+function player.Player:_init(world, level, tileW, tileH, x, y, speed, img)
 	self.tileW, self.tileH = tileW, tileH
 	self.x, self.y = x, y
 	self.world = world
@@ -28,7 +28,7 @@ function player.Player:_init(world, level, tileW, tileH, x, y, speed, imgFile)
 	self.marker = {x = nil, y = nil}
 	
 	self.speed = speed
-	self.tileset = love.graphics.newImage(imgFile)
+	self.tileset = img
 	self.dir = "UP"
 	self.ndir = "UP"
 

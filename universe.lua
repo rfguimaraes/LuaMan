@@ -25,9 +25,9 @@ function universe.Universe.populate()
 				table.insert(self.coins, c)
 			elseif tile:match(maze.Maze.enemies) then
 				self:parseEnemy(tile, tx, ty)
-			elseif tile == "s"
+			elseif tile == "s" then
 				self.parsePlayer(tx, ty)
-			elseif tile == "$"
+			elseif tile == "$" then
 				self.parsePill(tx, ty)
 			end
 		end
@@ -48,18 +48,18 @@ function universe.Universe:set_level(maze)
 end
 
 function universe.Universe:add(entity)
-	self.
+end
 
 function universe.collision(item, other)
 	if item.is_a[player.Player] then
-		if other.is_a[coin] or other.is_a[pill]
+		if other.is_a[coin] or other.is_a[pill] then
 			return "cross"
 		else
 		    return "touch"
 		end
 
 	if item.is_a[enemy] then
-		if other.is_a[wall] or other is_a[player.Player] then
+		if other.is_a[wall] or other.is_a[player.Player] then
 			return "touch"
 		else
 			return false

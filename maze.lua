@@ -7,10 +7,10 @@ maze.Maze = classer.ncls()
 maze.Maze.blocks = "[%#]"
 maze.Maze.enemies = "[bcip]"
 
-function maze.Maze:_init(tileW, tileH, imgFile, tileString, quadInfo)
+function maze.Maze:_init(tileW, tileH, img, tileString, quadInfo)
 	self.tileW = tileW
 	self.tileH = tileH
-	self.tileset = love.graphics.newImage(imgFile)
+	self.tileset = img
 
 	local tilesetW, tilesetH = self.tileset:getWidth(), self.tileset:getHeight()
 	self.quads = {}
@@ -50,7 +50,7 @@ function maze.Maze:toWorld(world)
 			tile = self.tileTable[x][y]
 			if tile:match(maze.Maze.blocks) then
 				self.world:add({ctype = tile}, (x - 1)*self.tileW, (y - 1)*self.tileH, self.tileW, self.tileH)
-			elseif tile == "x" then
+			elseif tile == "." then
 				ck = coin.Coin(self.world, 4, (x - 1)*self.tileW, (y - 1)*self.tileH, self.tileH/2)
 				table.insert(wcoins, ck)
 			end
