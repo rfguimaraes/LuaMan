@@ -2,22 +2,15 @@ classer = require "classer"
 maze = require "maze"
 player = require "player"
 bump = require "bump"
-debug = true
 db = require "db"
+univ = require "universe"
 
-luaman = nil
-level = nil
-scene = bump.newWorld(32)
-mycoins = nil
-
+debug = true
+scene = nil
 -- Game starts
 function love.load(arg)
-	db.load()
-	level = db.lvl[1]
-	mycoins = level:toWorld(scene)
-
-	luaman = player.Player(scene, level,32, 32, 32, 32, 90, db.img.player)
-	local items, len = scene:getItems()
+	scene = univ.Universe(32)
+	scene:populate()
 end
 
 -- Every frame
@@ -25,16 +18,18 @@ function love.update(dt)
 	if love.keyboard.isDown('escape') then
 		love.event.push('quit')
 	end
-	luaman:update(dt)
+	scene.player:update(dt)
 end
 
 -- Every frame
 function love.draw(dt)
-	level:draw()
-	luaman:draw(dt)
-	--for ci in mycoins do
-	if mycoins[1].alive then
-		mycoins[1]:draw(dt)
+	scene.level:draw()
+	scene.player:draw(dt)
+	for _,c in ipairs(scene.coins) do
+		if c.alive then
+			c:draw(dt)
+		else
+			scene.coins[c] = nil
+		end
 	end
-	--end
 end

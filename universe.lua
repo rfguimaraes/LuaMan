@@ -1,50 +1,57 @@
 classer = require "classer"
 bump = require "bump"
 maze = require "maze"
+db = require "db"
 
 local universe = {}
 
 universe.Universe = classer.ncls()
 
-function universe.Universe:_init(gridSize, level)
+function universe.Universe:_init(gridSize)
+	db.load()
 	self.world = bump.newWorld(gridSize)
 	self.coins = {}
 	self.enemies = {}
 	self.player = nil
+	self.level = db.lvl[1]
 end
 
-function universe.Universe.populate()
+function universe.Universe:populate()
 	local c,p,e
+	local tileW, tileH = self.level.tileW, self.level.tileH
 	for x = 1,self.level.width do
 		for y = 1,self.level.height do
 			tile = self.level.tileTable[x][y]
 			if tile:match(maze.Maze.blocks) then
-				self.world:add({ctype = tile}, (x - 1)*self.tileW, (y - 1)*self.tileH, self.tileW, self.tileH)
+				self.world:add({ctype = tile}, (x - 1)*tileW, (y - 1)*tileH, tileW, tileH)
 			elseif tile == "." then
-				c = coin.Coin(self.world, 4, (x - 1)*self.tileW, (y - 1)*self.tileH, self.tileH/2)
-				table.insert(self.coins, c)
+				self:parseCoin(x, y)
 			elseif tile:match(maze.Maze.enemies) then
-				self:parseEnemy(tile, tx, ty)
+				self:parseEnemy(tile, x, y)
 			elseif tile == "s" then
-				self.parsePlayer(tx, ty)
+				self:parsePlayer(x, y)
 			elseif tile == "$" then
-				self.parsePill(tx, ty)
+				self:parsePill(x, y)
 			end
 		end
 	end
 end
 
-function universe.Universe.parseEnemy(tile, tx, ty)
+function universe.Universe:parseEnemy(tile, tx, ty)
 end
 
-function universe.Universe.parsePlayer(tx, ty)
+function universe.Universe:parsePlayer(tx, ty)
+	local x = (tx - 1) * self.level.tileW
+	local y = (ty - 1) * self.level.tileH
+	self.player = player.Player(self.world, self.level,32, 32, x, y, 90, db.img.player)
 end
 
-function universe.Universe.parsePill(tx, ty)
+function universe.Universe:parseCoin(tx, ty)
+	c = coin.Coin(self.world, 4, (tx - 1)*self.level.tileW, (ty - 1)*self.level.tileH, self.level.tileW/2)
+	table.insert(self.coins, c)
 end
 
-function universe.Universe:set_level(maze)
-	self.level = maze
+function universe.Universe:parsePill(tx, ty)
 end
 
 function universe.Universe:add(entity)
@@ -57,6 +64,7 @@ function universe.collision(item, other)
 		else
 		    return "touch"
 		end
+	end
 
 	if item.is_a[enemy] then
 		if other.is_a[wall] or other.is_a[player.Player] then
