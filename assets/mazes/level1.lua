@@ -2,9 +2,9 @@ maze = require "maze"
 
 local tileString = [[
 ###########
-#         #
-#  ##x##  #
-#  ##x##  #
+#s        #
+#  ## ##  #
+#  ##.##  #
 #  #####  #
 #         #
 ###########
@@ -12,9 +12,10 @@ local tileString = [[
 
 local quadInfo = 
 { 
-	{ ' ',  0, 0 }, -- floor 
-	{ '#', 32, 0 },  -- wall
-	{ 'x',  0, 0 } -- floor
+	{ ' ',  0, 0 },	-- floor 
+	{ '#', 32, 0 }, -- wall
+	{ '.',  0, 0 }, -- floor, dot
+	{ 's',  0, 0 }, -- floor, start
 }
 
 return maze.Maze(32,32,'assets/images/maze.png', tileString, quadInfo)

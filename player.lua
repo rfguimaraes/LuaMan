@@ -71,10 +71,10 @@ function player.Player:move(dt)
  	self.x, self.y = tx, ty
   	-- deal with the collisions
   	for i=1,len do
-  		--if cols[i].other.ctype == "coin" then
+  		if cols[i].other.ctype == "coin" then
     		--print('collided with ' .. tostring(cols[i].other.ctype))
-    		--cols[i].other:kill()
-    	--end
+    		cols[i].other:kill()
+    	end
   	end
 end
 

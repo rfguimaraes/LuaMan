@@ -5,6 +5,7 @@ local maze = {}
 
 maze.Maze = classer.ncls()
 maze.Maze.blocks = "[%#]"
+maze.Maze.enemies = "[bcip]"
 
 function maze.Maze:_init(tileW, tileH, imgFile, tileString, quadInfo)
 	self.tileW = tileW
