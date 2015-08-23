@@ -30,12 +30,27 @@ function maze.Maze:_init(tileW, tileH, imgFile, tileString, quadInfo)
 		x = 1
 		for tile in row:gmatch(".") do
 			self.tileTable[x][y] = tile
-			self.tileBatch:add(self.quads[tile], (x - 1)*self.tileW, (y - 1)*self.tileH)
+			self.tileBatch:add(self.quads[tile], (x - 1)*tileW, (y - 1)*tileH)
 			x = x + 1
 		end
 		y = y + 1
 	end
 	self.tileBatch:flush()
+end
+
+function maze.Maze:toWorld(world)
+	self.world = world
+	local tile = nil
+	for x = 1,self.width do
+		for y = 1,self.height do
+			tile = self.tileTable[x][y]
+			if tile == "#" or tile == "%" then
+				self.world:add({ctype = tile}, (x - 1)*self.tileW, (y - 1)*self.tileH, self.tileW, self.tileH)
+				-- print(tile)
+			end
+			-- print(tile)	
+		end
+	end
 end
 
 function maze.Maze:draw()
