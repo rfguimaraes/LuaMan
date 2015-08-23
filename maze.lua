@@ -47,13 +47,12 @@ function maze.Maze:toWorld(world)
 	for x = 1,self.width do
 		for y = 1,self.height do
 			tile = self.tileTable[x][y]
-			if tile == "#" or tile == "%" then
+			if tile:match(maze.Maze.blocks) then
 				self.world:add({ctype = tile}, (x - 1)*self.tileW, (y - 1)*self.tileH, self.tileW, self.tileH)
 			elseif tile == "x" then
-				ck = coin.Coin(self.world, 10, (x - 1)*self.tileW, (y - 1)*self.tileH)
+				ck = coin.Coin(self.world, 4, (x - 1)*self.tileW, (y - 1)*self.tileH, self.tileH/2)
 				table.insert(wcoins, ck)
 			end
-			-- print(tile)	
 		end
 	end
 	return wcoins

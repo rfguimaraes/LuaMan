@@ -3,7 +3,7 @@ maze = require "maze"
 local tileString = [[
 ###########
 #         #
-#  #####  #
+#  ##x##  #
 #  ##x##  #
 #  #####  #
 #         #

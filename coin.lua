@@ -4,25 +4,23 @@ local coin = {}
 
 coin.Coin = classer.ncls()
 
-function coin.Coin:_init(world, radius, x, y)
-	self.width = radius
-	self.height = radius
+function coin.Coin:_init(world, radius, x, y, offset)
+	self.width = radius * 2
+	self.height = radius * 2
 	self.x = x
 	self.y = y
 	self.ctype = "coin"
 	self.world = world
-	world:add(self, x  + 11, y + 11, radius, radius)
+	self.off = offset
+	world:add(self, x  + (offset - radius), y + (offset - radius), self.width, self.height)
 	self.alive = true
 end
 
 function coin.Coin:draw(dt)
-	local ox = 16
-	local oy = 16
-	love.graphics.circle("fill", self.x + ox, self.y + oy, self.width, 10)
+	love.graphics.circle("fill", self.x + self.off, self.y + self.off, self.width, 3)
 end
 
 function coin.Coin:kill()
-	print("kill")
 	self.world:remove(self)
 	self.alive = false
 end

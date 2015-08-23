@@ -38,11 +38,12 @@ function player.Player:_init(world, level, tileW, tileH, x, y, speed, imgFile)
 
 	local walkFrames = grid('1-4',1, '3-1', 1)
 	self.walkAnim = anim8.newAnimation(walkFrames, 0.05)
+
+	self.ox = tileW/2
+	self.oy = tileH/2
 end
 
 function player.Player:update(dt)
-	-- table.foreach(self, print)
-
 	self:act()
 	self:move(dt)
 	self.walkAnim:update(dt)
@@ -50,25 +51,18 @@ function player.Player:update(dt)
 end
 
 function player.Player:checkDir(dir)
-	local res = self.level:freeSpots(self.x + 16, self.y + 16)
-	table.foreach(res, print)
-	return res[dir]
+	return self.level:freeSpots(self.x + self.ox, self.y + self.oy)[dir]
 end
 
 function player.Player:move(dt)
-	cur = self.level:curTile(self.x + 16, self.y + 16)
-	
 	if self:turn() then
-		if point_equal(self.marker, {x = self.x + 16, y = self.y + 16}, 3) then
+		if point_equal(self.marker, {x = self.x + self.ox, y = self.y + self.oy}, 3) then
 			self.dir = self.ndir
-			print("cur: "..cur.x.." "..cur.y)
-			print("marker: "..self.marker.x.." "..self.marker.y)
-			self.x = self.marker.x - 16
-			self.y = self.marker.y - 16
+			self.x = self.marker.x - self.ox
+			self.y = self.marker.y - self.oy
 			self.world:update(self, self.x, self.y)
 		end
 	end
-	--self.dir = self.ndir
 	local dx = player.dirs[self.dir].x * self.speed * dt
 	local dy = player.dirs[self.dir].y * self.speed * dt
 	local goalX, goalY = self.x + dx, self.y + dy
@@ -97,18 +91,11 @@ function player.Player:turn()
 	    return false
 	end
 
-	--cur = self.level:curTile(self.x, self.y)
-	--print("cur")
-	--table.foreach(cur,print)
+	local cur = self.level:curTile(self.x + self.ox, self.y + self.oy)
 
-	self.marker.x = ((cur.x - 1) * self.level.tileW) + 16
-	self.marker.y = ((cur.y - 1) * self.level.tileH) + 16
-	--print("mark")
-	--table.foreach(self.marker,print)
+	self.marker.x = ((cur.x - 1) * self.level.tileW) + self.ox
+	self.marker.y = ((cur.y - 1) * self.level.tileH) + self.oy
 	return true
-
-	--self.marker.x = self.marker.x + self.level.tileW/2
-	--self.marker.y = self.marker.y + self.level.tileH/2
 end
 
 function player.Player:act()
@@ -128,8 +115,6 @@ function player.Player:draw(dt)
 	ox = self.tileW/2
 	oy = self.tileH/2
 	self.walkAnim:draw(self.tileset, self.x + ox, self.y + oy, angle, 1, 1, ox, oy)
-	-- table.foreach(player.rots, print)
-	-- print(angle)
 end
 
 function player.Player:collide(other)
