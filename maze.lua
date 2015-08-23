@@ -1,8 +1,10 @@
 classer = require "classer"
+coin = require "coin"
 
 local maze = {}
 
 maze.Maze = classer.ncls()
+maze.Maze.blocks = "[%#]"
 
 function maze.Maze:_init(tileW, tileH, imgFile, tileString, quadInfo)
 	self.tileW = tileW
@@ -40,17 +42,42 @@ end
 
 function maze.Maze:toWorld(world)
 	self.world = world
+	local wcoins = {}
 	local tile = nil
 	for x = 1,self.width do
 		for y = 1,self.height do
 			tile = self.tileTable[x][y]
 			if tile == "#" or tile == "%" then
 				self.world:add({ctype = tile}, (x - 1)*self.tileW, (y - 1)*self.tileH, self.tileW, self.tileH)
-				-- print(tile)
+			elseif tile == "x" then
+				ck = coin.Coin(self.world, 10, (x - 1)*self.tileW, (y - 1)*self.tileH)
+				table.insert(wcoins, ck)
 			end
 			-- print(tile)	
 		end
 	end
+	return wcoins
+end
+
+function maze.Maze:freeSpots(x, y)
+	tx = math.floor(x/self.tileW) + 1
+	ty = math.floor(y/self.tileH) + 1
+
+	local dir = {}
+
+	dir.RIGHT = (tx < self.width) and not self.tileTable[tx + 1][ty]:match(maze.Maze.blocks)
+	dir.LEFT = (tx > 1) and not self.tileTable[tx - 1][ty]:match(maze.Maze.blocks)
+	dir.UP = (ty > 1) and not self.tileTable[tx][ty - 1]:match(maze.Maze.blocks)
+	dir.DOWN = (ty < self.height) and not self.tileTable[tx][ty + 1]:match(maze.Maze.blocks)
+	
+	return dir
+end
+
+function maze.Maze:curTile(x, y)
+	local pos = {}
+	pos.x = math.floor(x/self.tileW) + 1
+	pos.y = math.floor(y/self.tileH) + 1
+	return pos
 end
 
 function maze.Maze:draw()

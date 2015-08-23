@@ -7,16 +7,16 @@ debug = true
 luaman = nil
 level = nil
 scene = bump.newWorld(32)
+mycoins = nil
 
 -- Game starts
 function love.load(arg)
 	path = "assets/mazes/level1.lua"
 	level = love.filesystem.load(path)()
-	level:toWorld(scene)
+	mycoins = level:toWorld(scene)
 
-	luaman = player.Player(scene,32, 32, 32, 32, 40, "assets/images/player.png")
+	luaman = player.Player(scene, level,32, 32, 32, 32, 90, "assets/images/player.png")
 	local items, len = scene:getItems()
-	table.foreach(items, print)
 end
 
 -- Every frame
@@ -37,4 +37,9 @@ end
 function love.draw(dt)
 	level:draw()
 	luaman:draw(dt)
+	--for ci in mycoins do
+	if mycoins[1].alive then
+		mycoins[1]:draw(dt)
+	end
+	--end
 end
