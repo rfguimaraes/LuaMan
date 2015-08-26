@@ -131,10 +131,10 @@ function player.Player:collide(other)
 	elseif other.ctype == "#" then
 		return "slide"
 	elseif other.ctype == "%" then
-		return "touch"
+		return "slide"
 	elseif other.ctype == "enemy" then
 	    if self.status == "normal" then
-	    	return "touch"
+	    	return "cross"
 	    elseif self.status == "super" then
 	    	return "cross"
 	    end

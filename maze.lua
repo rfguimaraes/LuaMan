@@ -4,7 +4,7 @@ coin = require "coin"
 local maze = {}
 
 maze.Maze = classer.ncls()
-maze.Maze.blocks = "[%#]"
+maze.Maze.blocks = "[%%#]"
 maze.Maze.enemies = "[bcip]"
 
 function maze.Maze:_init(tileW, tileH, img, tileString, quadInfo)

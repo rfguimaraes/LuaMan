@@ -3,7 +3,7 @@ maze = require "maze"
 local tileString = [[
 ###########
 #s        #
-#  ## b#  #
+#  #% b%  #
 #  ##.##  #
 #  ##. #  #
 #    #    #
@@ -14,6 +14,7 @@ local quadInfo =
 { 
 	{ ' ',  0, 0 },	-- floor 
 	{ '#', 32, 0 }, -- wall
+	{ '%', 64, 0 }, -- specwall
 	{ '.',  0, 0 }, -- floor, dot
 	{ 's',  0, 0 }, -- floor, start
 	{ 'b',  0, 0 }, -- floor, enemy
