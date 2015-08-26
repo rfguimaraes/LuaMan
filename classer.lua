@@ -1,3 +1,6 @@
+-- Obtained (with small changes) from:
+-- http://lua-users.org/wiki/ObjectOrientationTutorial
+
 local classer = {}
 
 function classer.ncls(...)

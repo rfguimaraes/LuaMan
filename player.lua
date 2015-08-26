@@ -1,5 +1,5 @@
 classer = require "classer"
-anim8 = require "anim8"
+anim8 = require "lib.anim8"
 
 local player = {}
 player.Player = classer.ncls()
@@ -23,7 +23,8 @@ function player.Player:_init(world, level, tileW, tileH, x, y, speed, img)
 	self.level = level
 	self.world:add(self, x, y, tileW, tileH)
 	self.ctype = "player"
-	self.status = "normal"
+	self.status = "normal" -- change this to model "power" decayment
+	self.alive = true
 
 	self.marker = {x = nil, y = nil}
 	

@@ -1,12 +1,13 @@
 classer = require "classer"
 maze = require "maze"
 player = require "player"
-bump = require "bump"
+bump = require "lib.bump"
 db = require "db"
 univ = require "universe"
 
 debug = true
 scene = nil
+
 -- Game starts
 function love.load(arg)
 	scene = univ.Universe(32)

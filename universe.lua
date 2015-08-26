@@ -1,5 +1,5 @@
 classer = require "classer"
-bump = require "bump"
+bump = require "lib.bump"
 maze = require "maze"
 db = require "db"
 
@@ -47,7 +47,7 @@ function universe.Universe:parsePlayer(tx, ty)
 end
 
 function universe.Universe:parseCoin(tx, ty)
-	c = coin.Coin(self.world, 4, (tx - 1)*self.level.tileW, (ty - 1)*self.level.tileH, self.level.tileW/2)
+	c = coin.Coin(self.world, 4, (tx - 1) * self.level.tileW, (ty - 1) * self.level.tileH, self.level.tileW/2)
 	table.insert(self.coins, c)
 end
 
