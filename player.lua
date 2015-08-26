@@ -53,7 +53,6 @@ function player.Player:update(dt)
 	self:act()
 	self:move(dt)
 	self.walkAnim:update(dt)
-	self:checkDir(self.dir)
 end
 
 function player.Player:checkDir(dir)

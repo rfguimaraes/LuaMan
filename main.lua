@@ -10,8 +10,6 @@ enemy = require "enemy"
 debug = true
 scene = nil
 
-ghost = nil
-
 -- Game starts
 function love.load(arg)
 	scene = univ.Universe(32)
