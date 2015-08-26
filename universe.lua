@@ -2,6 +2,7 @@ classer = require "classer"
 bump = require "lib.bump"
 maze = require "maze"
 db = require "db"
+enemy = require "enemy"
 
 local universe = {}
 
@@ -17,7 +18,6 @@ function universe.Universe:_init(gridSize)
 end
 
 function universe.Universe:populate()
-	local c,p,e
 	local tileW, tileH = self.level.tileW, self.level.tileH
 	for x = 1,self.level.width do
 		for y = 1,self.level.height do
@@ -38,6 +38,10 @@ function universe.Universe:populate()
 end
 
 function universe.Universe:parseEnemy(tile, tx, ty)
+	local x = (tx - 1) * self.level.tileW
+	local y = (ty - 1) * self.level.tileH
+	local e = enemy.Enemy(self.world, self.level, 32, 32, x ,y, 140, db.img.enemy, 1)
+	table.insert(self.enemies, e)
 end
 
 function universe.Universe:parsePlayer(tx, ty)
@@ -47,7 +51,7 @@ function universe.Universe:parsePlayer(tx, ty)
 end
 
 function universe.Universe:parseCoin(tx, ty)
-	c = coin.Coin(self.world, 4, (tx - 1) * self.level.tileW, (ty - 1) * self.level.tileH, self.level.tileW/2)
+	local c = coin.Coin(self.world, 4, (tx - 1) * self.level.tileW, (ty - 1) * self.level.tileH, self.level.tileW/2)
 	table.insert(self.coins, c)
 end
 

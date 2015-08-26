@@ -12,7 +12,8 @@ function db.loadImages()
 	db.img  = 
 	{
 		player = love.graphics.newImage(imgPath.."player.png"),
-		maze = love.graphics.newImage(imgPath.."maze.png")
+		maze = love.graphics.newImage(imgPath.."maze.png"),
+		enemy = love.graphics.newImage(imgPath.."ghost.png")
 	}
 end
 

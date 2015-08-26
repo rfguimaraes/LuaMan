@@ -5,8 +5,12 @@ bump = require "lib.bump"
 db = require "db"
 univ = require "universe"
 
+enemy = require "enemy"
+
 debug = true
 scene = nil
+
+ghost = nil
 
 -- Game starts
 function love.load(arg)
@@ -20,6 +24,7 @@ function love.update(dt)
 		love.event.push('quit')
 	end
 	scene.player:update(dt)
+	scene.enemies[1]:update(dt)
 end
 
 -- Every frame
@@ -33,4 +38,5 @@ function love.draw(dt)
 			scene.coins[c] = nil
 		end
 	end
+	scene.enemies[1]:draw(dt)
 end

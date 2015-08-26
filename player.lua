@@ -17,13 +17,16 @@ player.dirs =
 		["UP"] = {x = 0, y = -1}}
 
 function player.Player:_init(world, level, tileW, tileH, x, y, speed, img)
+	self.ctype = "player"
+	--- Identical code to enemy
 	self.tileW, self.tileH = tileW, tileH
 	self.x, self.y = x, y
 	self.world = world
 	self.level = level
 	self.world:add(self, x, y, tileW, tileH)
-	self.ctype = "player"
-	self.status = "normal" -- change this to model "power" decayment
+	
+	-- change this to model "power" decayment
+	self.status = "normal" 
 	self.alive = true
 
 	self.marker = {x = nil, y = nil}
@@ -37,11 +40,13 @@ function player.Player:_init(world, level, tileW, tileH, x, y, speed, img)
 	local tilesetW = self.tileset:getWidth()
 	local grid = anim8.newGrid(32,32,tilesetW,tilesetH)
 
+	self.ox = tileW/2
+	self.oy = tileH/2
+	--- Identical code to enemy
+
 	local walkFrames = grid('1-4',1, '3-1', 1)
 	self.walkAnim = anim8.newAnimation(walkFrames, 0.05)
 
-	self.ox = tileW/2
-	self.oy = tileH/2
 end
 
 function player.Player:update(dt)
@@ -79,6 +84,7 @@ function player.Player:move(dt)
   	end
 end
 
+-- TODO: put this in another place
 function point_equal(p1, p2, th)
 	local x2 = (p1.x - p2.x) * (p1.x - p2.x)
 	local y2 = (p1.y - p2.y) * (p1.y - p2.y)
