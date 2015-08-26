@@ -1,3 +1,5 @@
+LuaMan
+=======================================
 A PacMan clone as university asignment.
 
 - View LICENSE file
