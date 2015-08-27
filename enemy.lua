@@ -7,7 +7,7 @@ local enemy = {}
 enemy.Enemy = classer.ncls(actor.Actor)
 
 function enemy.Enemy:_init(world, level, tileW, tileH, x, y, speed, img, index)
-	actor.Actor._init(self, world, level, ctype, tileW, tileH, x, y, speed, img)
+	actor.Actor._init(self, world, level, "enemy", tileW, tileH, x, y, speed, img)
 	self.index = index
 	self:initAnims()
 end
