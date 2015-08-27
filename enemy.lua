@@ -6,25 +6,20 @@ local enemy = {}
 
 enemy.Enemy = classer.ncls(actor.Actor)
 
-enemy.dirs = 
-	{["RIGHT"] = {x = 1, y = 0},
-	  ["DOWN"] = {x = 0, y = 1}, 
-	  ["LEFT"] = {x = -1, y = 0}, 
-		["UP"] = {x = 0, y = -1}}
-
 function enemy.Enemy:_init(world, level, tileW, tileH, x, y, speed, img, index)
-	actor.Actor(world, level, ctype, tileW, tileH, x, y, speed, img)
+	actor.Actor._init(self, world, level, ctype, tileW, tileH, x, y, speed, img)
 	self.index = index
+	self:initAnims()
 end
 
 function enemy.Enemy:initAnims()
-	local normalFrames = grid('1-2', index)
+	local normalFrames = self.grid('1-2', self.index)
 	self.normalAnim = anim8.newAnimation(normalFrames, 0.1)
 
-	local fearFrames = grid('3-4', index)
+	local fearFrames = self.grid('3-4', self.index)
 	self.fearAnim = anim8.newAnimation(fearFrames, 0.1)
 
-	local eyeFrames = grid(5, index)
+	local eyeFrames = self.grid(5, self.index)
 	self.eyeAnim = anim8.newAnimation(eyeFrames, 0.1)
 
 	self.animations = {	normal = self.normalAnim,

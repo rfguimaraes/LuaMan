@@ -29,10 +29,10 @@ function actor.Actor:_init(world, level, ctype, tileW, tileH, x, y, speed, img)
 
 	local tilesetH = self.tileset:getHeight()
 	local tilesetW = self.tileset:getWidth()
-	local grid = anim8.newGrid(32,32,tilesetW,tilesetH)
+	self.grid = anim8.newGrid(self.tileW, self.tileH,tilesetW, tilesetH)
 
-	self.ox = tileW/2
-	self.oy = tileH/2
+	self.ox = self.tileW/2
+	self.oy = self.tileH/2
 
 	self.animations = {}
 end
