@@ -8,8 +8,8 @@ actor.Actor = classer.ncls()
 
 -- Initialization
 
-function actor.Actor:_init(world, level, tileW, tileH, x, y, speed, img)
-	self.ctype = nil
+function actor.Actor:_init(world, level, ctype, tileW, tileH, x, y, speed, img)
+	self.ctype = ctype
 
 	self.tileW, self.tileH = tileW, tileH
 	self.x, self.y = x, y
@@ -35,8 +35,6 @@ function actor.Actor:_init(world, level, tileW, tileH, x, y, speed, img)
 	self.oy = tileH/2
 
 	self.animations = {}
-
-	self:initAnims()
 end
 
 function actor.Actor:initAnims()
@@ -109,3 +107,5 @@ end
 function actor.Actor:draw(dt)
 	assert(false, "Must be overloaded!\n")
 end
+
+return actor

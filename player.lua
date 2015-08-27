@@ -15,7 +15,8 @@ player.dirs =
 	  ["DOWN"] = {x = 0, y = 1}, 
 	  ["LEFT"] = {x = -1, y = 0}, 
 		["UP"] = {x = 0, y = -1}}
-
+		
+-- TODO: model "power" decayment
 function player.Player:_init(world, level, tileW, tileH, x, y, speed, img)
 	self.ctype = "player"
 	--- Identical code to enemy
