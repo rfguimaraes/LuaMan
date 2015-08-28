@@ -14,13 +14,59 @@ A PacMan clone as university asignment.
   + for Ubuntu there is a official PPA on the site above
   + for Fedora just install it from the default repository
 
-## Running:
+## Installation
 
-# Windows: drag and drop luaman.love to the love shortcut
+### Ubuntu
 
-# Linux & Mac: run love luaman.love in command line
+#### Download and install löve2d:
 
-# References
+- 32-bit
+https://bitbucket.org/rude/love/downloads/love_0.9.2ppa1_i386.deb
+- 64-bit
+https://bitbucket.org/rude/love/downloads/love_0.9.2ppa1_amd64.deb
+
+sudo apt-get install love
+
+#### Download the latest release:
+
+https://github.com/rfguimaraes/LuaMan/releases/download/first_try/luaman.love
+
+#### Running
+
+love luaman.love
+
+### Fedora
+
+#### Download and install löve2d:
+
+sudo dnf install love
+
+#### Download the latest release:
+
+https://github.com/rfguimaraes/LuaMan/releases/download/first_try/luaman.love
+
+#### Running
+
+love luaman.love
+
+### Windows: 
+
+#### Download and install löve2d:
+
+- 32-bit
+https://bitbucket.org/rude/love/downloads/love-0.9.2-win32.exe
+- 64-bit
+https://bitbucket.org/rude/love/downloads/love-0.9.2-win64.exe
+
+#### Download the latest release:
+
+https://github.com/rfguimaraes/LuaMan/releases/download/first_try/luaman.love
+
+#### Running
+
+Drag and drop luaman.love to the love icon
+
+## References
 
 - http://lua-users.org/wiki/TutorialDirectory
 - https://love2d.org/wiki/Category:Tutorials
