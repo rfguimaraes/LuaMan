@@ -51,7 +51,7 @@ function universe.Universe:parsePlayer(tx, ty)
 end
 
 function universe.Universe:parseCoin(tx, ty)
-	local c = coin.Coin(self.world, 4, (tx - 1) * self.level.tileW, (ty - 1) * self.level.tileH, self.level.tileW/2)
+	local c = coin.Coin(self.world, 3, (tx - 1) * self.level.tileW, (ty - 1) * self.level.tileH, self.level.tileW/2)
 	table.insert(self.coins, c)
 end
 

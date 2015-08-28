@@ -17,7 +17,7 @@ function coin.Coin:_init(world, radius, x, y, offset)
 end
 
 function coin.Coin:draw(dt)
-	love.graphics.circle("fill", self.x + self.off, self.y + self.off, self.width, 8)
+	love.graphics.circle("fill", self.x + self.off, self.y + self.off, self.width, 6)
 end
 
 function coin.Coin:kill()
