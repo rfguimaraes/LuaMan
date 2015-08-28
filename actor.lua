@@ -5,6 +5,7 @@ local actor = {}
 
 actor.Actor = classer.ncls()
 
+actor.Actor.blocks = "[%%#]"
 
 -- Initialization
 
@@ -56,7 +57,8 @@ end
 -- Movement
 
 function actor.Actor:checkDir(dir)
-	return self.level:freeSpots(self.x + self.ox, self.y + self.oy)[dir]
+	local c = self.level:lookAround(self.x + self.ox, self.y + self.oy)[dir]
+	return c ~= nil and not c:match(actor.Actor.blocks)
 end
 
 function actor.Actor:turn()

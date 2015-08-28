@@ -20,7 +20,6 @@ function maze.Maze:_init(tileW, tileH, img, tileString, quadInfo)
 		self.quads[info[1]] = love.graphics.newQuad(info[2], info[3], tileW,  tileH, tilesetW, tilesetH)
 	end
 
-
 	self.tileTable = {}
 
 	self.width = #(tileString:match("[^\n]+"))
@@ -59,17 +58,16 @@ function maze.Maze:toWorld(world)
 	return wcoins
 end
 
-function maze.Maze:freeSpots(x, y)
+function maze.Maze:lookAround(x, y)
 	tx = math.floor(x/self.tileW) + 1
 	ty = math.floor(y/self.tileH) + 1
 
 	local dir = {}
 
-	dir.RIGHT = (tx < self.width) and not self.tileTable[tx + 1][ty]:match(maze.Maze.blocks)
-	dir.LEFT = (tx > 1) and not self.tileTable[tx - 1][ty]:match(maze.Maze.blocks)
-	dir.UP = (ty > 1) and not self.tileTable[tx][ty - 1]:match(maze.Maze.blocks)
-	dir.DOWN = (ty < self.height) and not self.tileTable[tx][ty + 1]:match(maze.Maze.blocks)
-	
+	if (tx > self.width) then dir.RIGHT = nil else dir.RIGHT = self.tileTable[tx + 1][ty] end
+	if (tx < 1) then dir.LEFT = nil else dir.LEFT = self.tileTable[tx - 1][ty] end
+	if (ty < 1) then dir.UP = nil else dir.UP = self.tileTable[tx][ty - 1] end
+	if (ty > self.height) then dir.DOWN = nil else dir.DOWN = self.tileTable[tx][ty + 1] end
 	return dir
 end
 

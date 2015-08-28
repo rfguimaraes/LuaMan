@@ -6,6 +6,8 @@ local enemy = {}
 
 enemy.Enemy = classer.ncls(actor.Actor)
 
+actor.Actor.blocks = "[#]"
+
 function enemy.Enemy:_init(world, level, tileW, tileH, x, y, speed, img, index)
 	actor.Actor._init(self, world, level, "enemy", tileW, tileH, x, y, speed, img)
 	self.index = index
@@ -43,6 +45,11 @@ function enemy.Enemy:act()
 	else
 		self.ndir = "LEFT"
 	end
+end
+
+function enemy.Enemy:checkDir(dir)
+	local c = self.level:lookAround(self.x + self.ox, self.y + self.oy)[dir]
+	return c ~= nil and not c:match(enemy.Enemy.blocks)
 end
 
 function enemy.Enemy:handleCollisions(cols, len)
