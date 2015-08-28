@@ -11,18 +11,32 @@ player.rots =
 	  ["LEFT"] = math.rad(180), 
 		["UP"] = math.rad(270)}
 
+player.MAX_ENERGY = 100
+player.ENERGY_LOSS = 10
+
 -- TODO: model "power" decayment
 function player.Player:_init(world, level, tileW, tileH, x, y, speed, img)
 	actor.Actor._init(self, world, level, "player", tileW, tileH, x, y, speed, img)
 	self:initAnims()
+	self.energy = 0
 end
 
 function player.Player:initAnims()
 	local walkFrames = self.grid('1-4',1, '3-1', 1)
 	self.walkAnim = anim8.newAnimation(walkFrames, 0.05)
 
-	self.animations = { normal = self.walkAnim
+	self.animations = { normal = self.walkAnim,
+						power = self.walkAnim
 	}
+end
+
+function player.Player:update(dt)
+	actor.Actor.update(self, dt)
+	self.energy = self.energy - player.ENERGY_LOSS * dt
+	if self.energy <=  0 then
+		self.energy = 0
+		self.status = "normal"
+	end
 end
 
 function player.Player:act()
@@ -43,8 +57,23 @@ function player.Player:handleCollisions(cols, len)
     		cols[i].other:kill()
     	elseif cols[i].other.ctype == "pill" then
     		cols[i].other:kill()
+    		self.energy = player.MAX_ENERGY
+    		self.status = "power"
+    	elseif cols[i].other.ctype == "enemy" then
+    		self:versusEnemy(cols[i].other)
     	end
   	end
+end
+
+function player.Player:versusEnemy(enemy)
+	if self.status == "normal" then
+		assert(enemy.status ~= "fear", "Invalid state!\n")
+		if enemy.status == "normal" then
+			self:kill()
+		end
+	elseif enemy.status ~= "eye" then
+		-- TODO: Earn points maybe?
+	end
 end
 
 function player.Player:collide(other)
@@ -73,5 +102,10 @@ function player.Player:draw(dt)
 	oy = self.tileH/2
 	self.walkAnim:draw(self.tileset, self.x + ox, self.y + oy, angle, 1, 1, ox, oy)
 end
+
+function player.Player:kill()
+	self.alive = false
+end
+
 
 return player

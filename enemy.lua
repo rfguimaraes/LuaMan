@@ -53,7 +53,13 @@ function enemy.Enemy:checkDir(dir)
 end
 
 function enemy.Enemy:handleCollisions(cols, len)
-	-- Do something
+	-- Do something or not?
+end
+
+function enemy.Enemy:versusPlayer(player)
+	if self.status == "fear" then
+		self:kill()
+	end
 end
 
 function enemy.Enemy:collide(other)
@@ -69,6 +75,14 @@ end
 function enemy.Enemy:draw(dt)
 	local curAnim = self.animations[self.status]
 	curAnim:draw(self.tileset, self.x, self.y)
+end
+
+function enemy.Enemy:kill()
+	if self.status ~= "fear" then
+		return
+	else
+		self.status = "eye"
+	end
 end
 
 return enemy

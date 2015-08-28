@@ -9,6 +9,7 @@ enemy = require "enemy"
 
 debug = true
 scene = nil
+quit = false
 
 -- Game starts
 function love.load(arg)
@@ -18,7 +19,7 @@ end
 
 -- Every frame
 function love.update(dt)
-	if love.keyboard.isDown('escape') then
+	if love.keyboard.isDown('escape') or quit then
 		love.event.push('quit')
 	end
 	scene.player:update(dt)
@@ -45,4 +46,7 @@ function love.draw(dt)
 		end
 	end
 	scene.enemies[1]:draw(dt)
+	if not scene.player.alive then
+		quit = true
+	end
 end
