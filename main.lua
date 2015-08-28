@@ -22,30 +22,12 @@ function love.update(dt)
 	if love.keyboard.isDown('escape') or quit then
 		love.event.push('quit')
 	end
-	scene.player:update(dt)
-	scene.enemies[1]:update(dt)
+	scene:update(dt)
 end
 
 -- Every frame
 function love.draw(dt)
-	scene.level:draw()
-	scene.player:draw(dt)
-	for _,c in ipairs(scene.coins) do
-		if c.alive then
-			c:draw(dt)
-		else
-			scene.coins[c] = nil
-		end
-	end
-
-	for _,p in ipairs(scene.pills) do
-		if p.alive then
-			p:draw(dt)
-		else
-			scene.coins[p] = nil
-		end
-	end
-	scene.enemies[1]:draw(dt)
+	scene:drawAndClean(dt)
 	if not scene.player.alive then
 		quit = true
 	end

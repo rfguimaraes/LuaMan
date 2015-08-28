@@ -30,6 +30,16 @@ function enemy.Enemy:initAnims()
 					}
 end
 
+function enemy.Enemy:update(playerStatus, dt)
+	if self.status == "normal" and playerStatus == "power" then
+		self.status = "fear"
+	elseif self.status == "fear" and playerStatus == "normal" then
+		self.status = "normal"
+	end
+	
+	actor.Actor.update(self, dt)	
+end
+
 function enemy.Enemy:act()
 	if math.random() < 0.25 then
 		self.ndir = self.dir
@@ -45,6 +55,10 @@ function enemy.Enemy:act()
 	else
 		self.ndir = "LEFT"
 	end
+end
+
+function enemy.Enemy:onFear()
+	self.status = "fear"
 end
 
 function enemy.Enemy:checkDir(dir)

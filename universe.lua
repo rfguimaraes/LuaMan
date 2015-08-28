@@ -19,6 +19,8 @@ function universe.Universe:_init(gridSize)
 	self.level = db.lvl[1]
 end
 
+-- Populate
+
 function universe.Universe:populate()
 	local tileW, tileH = self.level.tileW, self.level.tileH
 	for x = 1,self.level.width do
@@ -64,27 +66,37 @@ function universe.Universe:parsePill(tx, ty)
 	table.insert(self.pills, p)
 end
 
-function universe.Universe:add(entity)
+-- Update
+
+function universe.Universe:update(dt)
+	local prev = self.player.status
+	local toFear = (prev == "normal")
+	self.player:update(dt)
+
+	toFear = toFear and self.player.status == "power"
+	for _,e in ipairs(self.enemies) do
+		e:update(self.player.status, dt)
+	end
 end
 
-function universe.collision(item, other)
-	if item.is_a[player.Player] then
-		if other.is_a[coin] or other.is_a[pill] then
-			return "cross"
+-- Draw
+
+function universe.Universe:drawAndClean(dt)
+	scene.level:draw()
+	self:drawAndCleanList(self.coins, dt)
+	self:drawAndCleanList(self.pills, dt)
+	self:drawAndCleanList(self.enemies, dt)
+	self.player:draw(dt)
+end
+
+function universe.Universe:drawAndCleanList(list, dt)
+	for _,x in ipairs(list, dt) do
+		if x.alive then
+			x:draw(dt)
 		else
-		    return "touch"
+			list[x] = nil
 		end
 	end
-
-	if item.is_a[enemy] then
-		if other.is_a[wall] or other.is_a[player.Player] then
-			return "touch"
-		else
-			return false
-		end
-	end
-
-	return false
 end
 
 return universe
