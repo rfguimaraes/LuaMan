@@ -36,5 +36,13 @@ function love.draw(dt)
 			scene.coins[c] = nil
 		end
 	end
+
+	for _,p in ipairs(scene.pills) do
+		if p.alive then
+			p:draw(dt)
+		else
+			scene.coins[p] = nil
+		end
+	end
 	scene.enemies[1]:draw(dt)
 end

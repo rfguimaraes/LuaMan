@@ -40,24 +40,6 @@ function maze.Maze:_init(tileW, tileH, img, tileString, quadInfo)
 	self.tileBatch:flush()
 end
 
-function maze.Maze:toWorld(world)
-	self.world = world
-	local wcoins = {}
-	local tile = nil
-	for x = 1,self.width do
-		for y = 1,self.height do
-			tile = self.tileTable[x][y]
-			if tile:match(maze.Maze.blocks) then
-				self.world:add({ctype = tile}, (x - 1)*self.tileW, (y - 1)*self.tileH, self.tileW, self.tileH)
-			elseif tile == "." then
-				ck = coin.Coin(self.world, 4, (x - 1)*self.tileW, (y - 1)*self.tileH, self.tileH/2)
-				table.insert(wcoins, ck)
-			end
-		end
-	end
-	return wcoins
-end
-
 function maze.Maze:lookAround(x, y)
 	tx = math.floor(x/self.tileW) + 1
 	ty = math.floor(y/self.tileH) + 1

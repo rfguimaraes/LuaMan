@@ -41,6 +41,8 @@ function player.Player:handleCollisions(cols, len)
 	for i=1,len do
   		if cols[i].other.ctype == "coin" then
     		cols[i].other:kill()
+    	elseif cols[i].other.ctype == "pill" then
+    		cols[i].other:kill()
     	end
   	end
 end

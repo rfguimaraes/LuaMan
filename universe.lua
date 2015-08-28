@@ -3,6 +3,7 @@ bump = require "lib.bump"
 maze = require "maze"
 db = require "db"
 enemy = require "enemy"
+pill = require "pill"
 
 local universe = {}
 
@@ -12,6 +13,7 @@ function universe.Universe:_init(gridSize)
 	db.load()
 	self.world = bump.newWorld(gridSize)
 	self.coins = {}
+	self.pills = {}
 	self.enemies = {}
 	self.player = nil
 	self.level = db.lvl[1]
@@ -30,7 +32,7 @@ function universe.Universe:populate()
 				self:parseEnemy(tile, x, y)
 			elseif tile == "s" then
 				self:parsePlayer(x, y)
-			elseif tile == "$" then
+			elseif tile == "u" then
 				self:parsePill(x, y)
 			end
 		end
@@ -51,11 +53,15 @@ function universe.Universe:parsePlayer(tx, ty)
 end
 
 function universe.Universe:parseCoin(tx, ty)
-	local c = coin.Coin(self.world, 3, (tx - 1) * self.level.tileW, (ty - 1) * self.level.tileH, self.level.tileW/2)
+	local tileW, tileH = self.level.tileW, self.level.tileH
+	local c = coin.Coin(self.world, 3, (tx - 1) * tileW, (ty - 1) * tileH, tileW, tileH)
 	table.insert(self.coins, c)
 end
 
 function universe.Universe:parsePill(tx, ty)
+	local tileW, tileH = self.level.tileW, self.level.tileH
+	local p = pill.Pill(self.world, (tx - 1) * tileW, (ty - 1) * tileH, tileW, tileH)
+	table.insert(self.pills, p)
 end
 
 function universe.Universe:add(entity)
