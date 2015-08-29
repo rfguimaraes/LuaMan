@@ -6,7 +6,7 @@ local enemy = {}
 
 enemy.Enemy = classer.ncls(actor.Actor)
 
-actor.Actor.blocks = "[#]"
+enemy.Enemy.blocks = "[#]"
 
 function enemy.Enemy:_init(world, level, tileW, tileH, x, y, speed, img, index)
 	actor.Actor._init(self, world, level, "enemy", tileW, tileH, x, y, speed, img)
