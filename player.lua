@@ -83,7 +83,7 @@ function player.Player:collide(other)
 		return "cross"
 	elseif other.ctype == "#" then
 		return "slide"
-	elseif other.ctype == "%" then
+	elseif other.ctype == "w" then
 		return "slide"
 	elseif other.ctype == "enemy" then
 	    if self.status == "normal" then
@@ -91,6 +91,8 @@ function player.Player:collide(other)
 	    elseif self.status == "super" then
 	    	return "cross"
 	    end
+	elseif other.ctype == "spawn" then
+		return "touch"
 	else
 		return false
 	end

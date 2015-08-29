@@ -4,7 +4,6 @@ player = require "player"
 bump = require "lib.bump"
 db = require "db"
 univ = require "universe"
-
 enemy = require "enemy"
 
 debug = true

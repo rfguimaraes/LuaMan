@@ -67,7 +67,15 @@ function enemy.Enemy:checkDir(dir)
 end
 
 function enemy.Enemy:handleCollisions(cols, len)
-	-- Do something or not?
+	for i=1,len do
+		if cols[i].other.ctype == "player" then
+    		self:versusPlayer(cols[i].other)
+    	elseif cols[i].other.ctype == "spawn" then
+    		if self.status == "eye" then
+    			self.status = "normal"
+    		end
+    	end
+  	end
 end
 
 function enemy.Enemy:versusPlayer(player)
@@ -79,6 +87,8 @@ end
 function enemy.Enemy:collide(other)
 	if other.ctype == "#" then
 		return "touch"
+	elseif other.ctype == "spawn" then
+		return "cross"
 	elseif other.ctype == "player" then
 		return "cross"
 	else

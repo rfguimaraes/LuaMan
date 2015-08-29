@@ -5,7 +5,7 @@ local actor = {}
 
 actor.Actor = classer.ncls()
 
-actor.Actor.blocks = "[%%#]"
+actor.Actor.blocks = "[w#]"
 
 -- Initialization
 
