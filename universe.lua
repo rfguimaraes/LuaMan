@@ -9,6 +9,8 @@ local universe = {}
 
 universe.Universe = classer.ncls()
 
+maze.Maze.blocks = "[%%#]"
+
 function universe.Universe:_init(gridSize)
 	db.load()
 	self.world = bump.newWorld(gridSize)
@@ -42,9 +44,10 @@ function universe.Universe:populate()
 end
 
 function universe.Universe:parseEnemy(tile, tx, ty)
+	local enemyIndex = {b = 1, c = 2, i = 3, p = 4}
 	local x = (tx - 1) * self.level.tileW
 	local y = (ty - 1) * self.level.tileH
-	local e = enemy.Enemy(self.world, self.level, 32, 32, x ,y, 140, db.img.enemy, 1)
+	local e = enemy.Enemy(self.world, self.level, 32, 32, x ,y, 140, db.img.enemy, enemyIndex[tile])
 	table.insert(self.enemies, e)
 end
 
