@@ -79,12 +79,10 @@ end
 
 function universe.Universe:update(dt)
 	local prev = self.player.status
-	local toFear = (prev == "normal")
+	
 	self.player:update(dt)
-
-	toFear = toFear and self.player.status == "power"
 	for _,e in ipairs(self.enemies) do
-		e:update(self.player.status, dt)
+		e:update(prev, self.player.status, dt)
 	end
 end
 

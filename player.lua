@@ -109,5 +109,4 @@ function player.Player:kill()
 	self.alive = false
 end
 
-
 return player

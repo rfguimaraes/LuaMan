@@ -30,10 +30,13 @@ function enemy.Enemy:initAnims()
 					}
 end
 
-function enemy.Enemy:update(playerStatus, dt)
-	if self.status == "normal" and playerStatus == "power" then
+function enemy.Enemy:update(prev, cur, dt)
+	local toFear = (prev == "normal" and cur == "power")
+	local noFear = (prev == "power" and cur == "normal")
+
+	if self.status == "normal" and toFear then
 		self.status = "fear"
-	elseif self.status == "fear" and playerStatus == "normal" then
+	elseif self.status == "fear" and noFear then
 		self.status = "normal"
 	end
 	
