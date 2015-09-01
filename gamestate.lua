@@ -94,7 +94,7 @@ gamestate.WinState = classer.ncls(gamestate.GameState)
 function gamestate.WinState:update(dt)
 	if love.keyboard.isDown(' ') then
 		gamestate.inited = false
-		return gamestate.state["playing"]
+		return gamestate.state["start"]
 	end
 	return gamestate.state["win"]
 end
