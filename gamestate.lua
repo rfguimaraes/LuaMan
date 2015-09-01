@@ -51,7 +51,6 @@ end
 gamestate.PlayingState = classer.ncls(gamestate.GameState)
 
 function gamestate.PlayingState:update(dt)
-	table.foreach(gamestate, print)
 	if love.keyboard.isDown(' ') then
 		return gamestate.state["paused"]
 	end
@@ -65,7 +64,6 @@ function gamestate.PlayingState:update(dt)
 end
 
 function gamestate.PlayingState:draw(dt)
-	print(gamestate.scene)
 	if gamestate.scene then
 		gamestate.scene:drawAndClean(dt)
 	end

@@ -97,11 +97,11 @@ function universe.Universe:drawAndClean(dt)
 end
 
 function universe.Universe:drawAndCleanList(list, dt)
-	for _,x in ipairs(list, dt) do
+	for i,x in ipairs(list) do
 		if x.alive then
 			x:draw(dt)
 		else
-			list[x] = nil
+			table.remove(list ,i)
 		end
 	end
 end
