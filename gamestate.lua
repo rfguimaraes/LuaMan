@@ -43,9 +43,9 @@ end
 function gamestate.StartState:draw(dt)
 	gamestate.drawn = true
 	love.graphics.setColor(255, 255, 255, 255)
-	love.graphics.print("LUAMAN", 500, 200)
-	love.graphics.print("Press SPACE to play/pause, Esc to Exit", 300, 300)
-	love.graphics.print("Arrow-keys move the LuaMan", 300, 400)
+	love.graphics.print("LUAMAN", 100, 100, 0, 10, 10)
+	love.graphics.print("Press SPACE to play/pause, Esc to Exit", 200, 300,0,2,2)
+	love.graphics.print("Arrow-keys move the LuaMan", 200, 400, 0,2,2)
 end
 
 -----------------------------------------------------------
@@ -87,8 +87,8 @@ end
 function gamestate.PausedState:draw(dt)
 	gamestate.drawn = true
 	gamestate.scene:drawAndClean(dt)
-	love.graphics.print("GAME PAUSED", 300, 300)
-	love.graphics.print("Press SPACE to continue, Esc to Exit", 300, 400)
+	love.graphics.print("GAME PAUSED", 200, 300, 0,2,2)
+	love.graphics.print("Press SPACE to continue, Esc to Exit", 200, 400, 0,2,2)
 end
 
 -----------------------------------------------------------
@@ -107,8 +107,8 @@ end
 function gamestate.WinState:draw(dt)
 	gamestate.drawn = true
 	gamestate.scene:drawAndClean(dt)
-	love.graphics.print("WIN :D", 300, 300)
-	love.graphics.print("Press SPACE to restart, Esc to Exit", 300, 400)
+	love.graphics.print("WIN :D", 200, 200, 0,2,2)
+	love.graphics.print("Press SPACE to restart, Esc to Exit", 200, 400, 0,2,2)
 end
 
 -----------------------------------------------------------
@@ -127,8 +127,8 @@ end
 function gamestate.LossState:draw(dt)
 	gamestate.drawn = true
 	gamestate.scene:drawAndClean(dt)
-	love.graphics.print("Game Over :(", 300, 300)
-	love.graphics.print("Press SPACE to restart, Esc to Exit", 300, 400)
+	love.graphics.print("Game Over :(", 200, 200, 0,2,2)
+	love.graphics.print("Press SPACE to restart, Esc to Exit", 200, 400, 0,2,2)
 end
 
 -----------------------------------------------------------
