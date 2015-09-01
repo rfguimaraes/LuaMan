@@ -89,7 +89,7 @@ end
 -- Draw
 
 function universe.Universe:drawAndClean(dt)
-	scene.level:draw()
+	self.level:draw()
 	self:drawAndCleanList(self.coins, dt)
 	self:drawAndCleanList(self.pills, dt)
 	self:drawAndCleanList(self.enemies, dt)
@@ -97,13 +97,19 @@ function universe.Universe:drawAndClean(dt)
 end
 
 function universe.Universe:drawAndCleanList(list, dt)
-	for _,x in ipairs(list, dt) do
+	for i,x in ipairs(list) do
 		if x.alive then
 			x:draw(dt)
 		else
-			list[x] = nil
+			table.remove(list ,i)
 		end
 	end
+end
+
+function universe.Universe:cleared()
+	local answer = #self.pills == 0
+	answer = answer and #self.coins == 0
+	return answer
 end
 
 return universe
