@@ -8,6 +8,7 @@ gamestate.GameState = classer.ncls()
 gamestate.drawn = false
 gamestate.inited = false
 gamestate.scene = nil
+gamestate.switch = false
 
 -----------------------------------------------------------
 
@@ -32,7 +33,8 @@ function gamestate.StartState:update(dt)
 		gamestate.scene = univ.Universe(32)
 		gamestate.scene:populate()
 	end
-	if love.keyboard.isDown(' ') then
+	if gamestate.switch then
+		gamestate.switch = false
 		return gamestate.state["playing"]
 	end
 	return gamestate.state["start"]
@@ -51,7 +53,8 @@ end
 gamestate.PlayingState = classer.ncls(gamestate.GameState)
 
 function gamestate.PlayingState:update(dt)
-	if love.keyboard.isDown(' ') then
+	if gamestate.switch then
+		gamestate.switch = false
 		return gamestate.state["paused"]
 	end
 	if not gamestate.scene.player.alive then
@@ -74,7 +77,8 @@ end
 gamestate.PausedState = classer.ncls(gamestate.GameState)
 
 function gamestate.PausedState:update(dt)
-	if love.keyboard.isDown(' ') then
+	if gamestate.switch then
+		gamestate.switch = false
 		return gamestate.state["playing"]
 	end
 	return gamestate.state["paused"]
@@ -92,7 +96,8 @@ end
 gamestate.WinState = classer.ncls(gamestate.GameState)
 
 function gamestate.WinState:update(dt)
-	if love.keyboard.isDown(' ') then
+	if gamestate.switch then
+		gamestate.switch = false
 		gamestate.inited = false
 		return gamestate.state["start"]
 	end
@@ -111,7 +116,8 @@ end
 gamestate.LossState = classer.ncls(gamestate.GameState)
 
 function gamestate.LossState:update(dt)
-	if love.keyboard.isDown(' ') then
+	if gamestate.switch then
+		gamestate.switch = false
 		gamestate.inited = false
 		return gamestate.state["start"]
 	end

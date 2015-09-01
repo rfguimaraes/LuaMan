@@ -11,6 +11,7 @@ debug = true
 quit = false
 curState = gamestate.state["start"]
 nextState = curState
+
 -- Game starts
 function love.load(arg)
 end
@@ -27,4 +28,10 @@ end
 function love.draw(dt)
 	curState:draw(dt)
 	curState = nextState
+end
+
+function love.keypressed(key, isRepeat)
+	if key == " " then
+		gamestate.switch = not gamestate.switch
+	end
 end
