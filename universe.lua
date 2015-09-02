@@ -45,7 +45,7 @@ function universe.Universe:parseEnemy(tile, tx, ty)
 	local enemyIndex = {b = 1, c = 2, i = 3, p = 4}
 	local x = (tx - 1) * self.level.tileW
 	local y = (ty - 1) * self.level.tileH
-	local e = enemy.Enemy(self.world, self.level, 32, 32, x ,y, 140, db.img.enemy, enemyIndex[tile])
+	local e = enemy.Enemy(self.world, self.level, self.level.tileW, self.level.tileH , x ,y, 70, db.img.enemy, enemyIndex[tile])
 	if tile ~= "b" then
 		self:addSpawn(x, y)
 	end
@@ -60,12 +60,12 @@ end
 function universe.Universe:parsePlayer(tx, ty)
 	local x = (tx - 1) * self.level.tileW
 	local y = (ty - 1) * self.level.tileH
-	self.player = player.Player(self.world, self.level,32, 32, x, y, 90, db.img.player)
+	self.player = player.Player(self.world, self.level,self.level.tileW, self.level.tileH, x, y, 45, db.img.player)
 end
 
 function universe.Universe:parseCoin(tx, ty)
 	local tileW, tileH = self.level.tileW, self.level.tileH
-	local c = coin.Coin(self.world, 3, (tx - 1) * tileW, (ty - 1) * tileH, tileW, tileH)
+	local c = coin.Coin(self.world, 2, (tx - 1) * tileW, (ty - 1) * tileH, tileW, tileH)
 	table.insert(self.coins, c)
 end
 

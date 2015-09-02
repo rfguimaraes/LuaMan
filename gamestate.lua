@@ -30,7 +30,7 @@ gamestate.StartState = classer.ncls(gamestate.GameState)
 function gamestate.StartState:update(dt)
 	if not gamestate.inited then
 		gamestate.inited = true
-		gamestate.scene = univ.Universe(32)
+		gamestate.scene = univ.Universe(16)
 		gamestate.scene:populate()
 	end
 	if gamestate.switch then

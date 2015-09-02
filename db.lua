@@ -11,7 +11,7 @@ function db.loadImages()
 	local imgPath = "assets/images/"
 	db.img  = 
 	{
-		player = love.graphics.newImage(imgPath.."player.png"),
+		player = love.graphics.newImage(imgPath.."luaman.png"),
 		maze = love.graphics.newImage(imgPath.."maze.png"),
 		enemy = love.graphics.newImage(imgPath.."ghost.png")
 	}
@@ -22,7 +22,7 @@ function db.loadMazes()
 	local data1 = love.filesystem.load(mazePath.."level1.lua")()
 	db.lvl =
 	{
-		maze.Maze(32,32,db.img.maze, data1.tileString, data1.quadInfo)	
+		maze.Maze(16,16,db.img.maze, data1.tileString, data1.quadInfo)	
 	}
 end
 	
