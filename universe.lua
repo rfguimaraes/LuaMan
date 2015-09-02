@@ -82,8 +82,9 @@ function universe.Universe:update(dt)
 	
 	self.player:update(dt)
 	for _,e in ipairs(self.enemies) do
-		e:update(prev, self.player.status, dt)
+		e:update(self.player.gotPill, self.player.status, dt)
 	end
+	self.player.gotPill = false
 end
 
 -- Draw

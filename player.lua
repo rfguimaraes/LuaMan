@@ -11,7 +11,7 @@ player.rots =
 	  ["LEFT"] = math.rad(180), 
 		["UP"] = math.rad(270)}
 
-player.MAX_ENERGY = 100
+player.MAX_ENERGY = 1000
 player.ENERGY_LOSS = 10
 
 -- TODO: model "power" decayment
@@ -19,6 +19,7 @@ function player.Player:_init(world, level, tileW, tileH, x, y, speed, img)
 	actor.Actor._init(self, world, level, "player", tileW, tileH, x, y, speed, img)
 	self:initAnims()
 	self.energy = 0
+	self.gotPill = false
 end
 
 function player.Player:initAnims()
@@ -33,7 +34,7 @@ end
 function player.Player:update(dt)
 	actor.Actor.update(self, dt)
 	self.energy = self.energy - player.ENERGY_LOSS * dt
-	if self.energy <=  0 then
+	if self.energy <= 0 then
 		self.energy = 0
 		self.status = "normal"
 	end
@@ -59,6 +60,7 @@ function player.Player:handleCollisions(cols, len)
     		cols[i].other:kill()
     		self.energy = player.MAX_ENERGY
     		self.status = "power"
+    		self.gotPill = true
     	elseif cols[i].other.ctype == "enemy" then
     		self:versusEnemy(cols[i].other)
     	end
@@ -66,13 +68,14 @@ function player.Player:handleCollisions(cols, len)
 end
 
 function player.Player:versusEnemy(enemy)
-	if self.status == "normal" then
+	if enemy.status == "normal" then
+		self:kill()
+		return
+	elseif self.status == "normal" then
 		assert(enemy.status ~= "fear", "Invalid state!\n")
-		if enemy.status == "normal" then
-			self:kill()
-		end
 	elseif enemy.status ~= "eye" then
 		-- TODO: Earn points maybe?
+		-- Enemy eaten
 	end
 end
 
@@ -88,7 +91,7 @@ function player.Player:collide(other)
 	elseif other.ctype == "enemy" then
 	    if self.status == "normal" then
 	    	return "cross"
-	    elseif self.status == "super" then
+	    elseif self.status == "power" then
 	    	return "cross"
 	    end
 	elseif other.ctype == "spawn" then
