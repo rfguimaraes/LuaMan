@@ -5,6 +5,7 @@ A PacMan clone as university assignment.
 - View LICENSE file
 - External libraries in lib/ folder.
 - Current release: https://github.com/rfguimaraes/LuaMan/releases/tag/test
+- Source: https://github.com/rfguimaraes/LuaMan
 
 ======================================
 ## Installation
