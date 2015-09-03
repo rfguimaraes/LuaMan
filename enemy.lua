@@ -12,6 +12,7 @@ function enemy.Enemy:_init(world, level, tileW, tileH, x, y, speed, img, index)
 	actor.Actor._init(self, world, level, "enemy", tileW, tileH, x, y, speed, img)
 	self.index = index
 	self:initAnims()
+	self.lastUpdate = love.timer.getTime()
 end
 
 function enemy.Enemy:initAnims()
@@ -44,19 +45,22 @@ function enemy.Enemy:update(gotPill, cur, dt)
 end
 
 function enemy.Enemy:act()
-	if math.random() < 0.25 then
-		self.ndir = self.dir
-		return
-	end
-	local r = math.random()
-	if r < 0.25 then
-		self.ndir = "UP"
-	elseif r < 0.5 then
-		self.ndir = "DOWN"
-	elseif r < 0.75 then
-		self.ndir = "RIGHT"
-	else
-		self.ndir = "LEFT"
+	if love.timer.getTime() - self.lastUpdate >= 0.2 then
+		self.lastUpdate = love.timer.getTime()
+		if math.random() < 0.25 then
+			self.ndir = self.dir
+			return
+		end
+		local r = math.random()
+		if r < 0.25 then
+			self.ndir = "UP"
+		elseif r < 0.5 then
+			self.ndir = "DOWN"
+		elseif r < 0.75 then
+			self.ndir = "RIGHT"
+		else
+			self.ndir = "LEFT"
+		end
 	end
 end
 
