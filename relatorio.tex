@@ -1,0 +1,64 @@
+\documentclass[a4paper]{scrartcl}
+
+\usepackage[brazil]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{graphicx}
+%\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{pgf,tikz}
+\usetikzlibrary{arrows,automata}
+\usepackage{hyperref}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{amsfonts}
+\usepackage{multirow}
+
+\title{Relatório da Fase 1 do Projeto de MAC5784}
+\subtitle{LuaMan: um clone de Pac-Man}
+
+\author{Ricardo Ferreira Guimarães \\ 7577650}
+
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{Introdução}
+
+Neste projeto programa-se um jogo similar ao Pac-Man para estudo de aplicação de
+técnicas de inteligência artificial em jogos de computador.
+
+\section{Tecnologias}
+
+Para construção deste jogo utiliza-se a biblioteca löve2d (\url{http://love2d.org}),
+a qual auxilia o desenvolvimento de jogos utilizando a linguagem Lua.
+
+\section{Funcionamento}
+
+\subsection{Personagem principal}
+
+Nesta fase, LuaMan, o personagem principal é controlado pelo jogador utilizando as setas do teclado.
+O código responsável está no arquivo \texttt{player.lua}.
+
+\subsection{Inimigos}
+
+Os inimigos, representados pelos 4 fantasmas, se movem aleatoriamente da seguinte maneira:
+cada fantasma mantem a mesma direção na qual tentava andar com 25\% de chance, e com os outros 75\%
+escolhia uniformemente alguma direção (para cima, para baixo, para esquerda ou para direita), mesmo
+que ainda assim pudesse se manter na mesma direção que no passo anterior.
+
+A lógica dos fantasmas está implementada no arquivo \texttt{enemy.lua}, em particular na função
+\texttt{enemy.Enemy:act()}
+
+\section{Execução}
+
+Na pasta \texttt{releases}, se encontram arquivos compactados para cada sistema operacional disponível.
+Para executar o jogo, basta extrair o pacote referente ao sistema operacional desejado e executar o
+arquivo correspondente (luaman.exe no Windows, run.sh no Linux e luaman.app no MacOS).
+
+\section{Observações}
+
+O código do jogo está disponível em: \url{https://github.com/rfguimaraes/LuaMan}.
+
+\end{document}

@@ -69,7 +69,7 @@ end
 
 function universe.Universe:parseCoin(tx, ty)
 	local tileW, tileH = self.level.tileW, self.level.tileH
-	local c = coin.Coin(self.world, 2, (tx - 1) * tileW, (ty - 1) * tileH, tileW, tileH)
+	local c = coin.Coin(self.world, 1, (tx - 1) * tileW, (ty - 1) * tileH, tileW, tileH)
 	table.insert(self.coins, c)
 end
 
