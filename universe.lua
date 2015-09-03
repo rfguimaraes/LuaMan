@@ -36,6 +36,8 @@ function universe.Universe:populate()
 				self:parsePlayer(x, y)
 			elseif tile == "u" then
 				self:parsePill(x, y)
+			elseif tile == "u" then
+				self:parseSpawn(x, y)
 			end
 		end
 	end
@@ -45,14 +47,16 @@ function universe.Universe:parseEnemy(tile, tx, ty)
 	local enemyIndex = {b = 1, c = 2, i = 3, p = 4}
 	local x = (tx - 1) * self.level.tileW
 	local y = (ty - 1) * self.level.tileH
-	local e = enemy.Enemy(self.world, self.level, self.level.tileW, self.level.tileH , x ,y, 70, db.img.enemy, enemyIndex[tile])
+	local e = enemy.Enemy(self.world, self.level, self.level.tileW, self.level.tileH , x ,y, 90, db.img.enemy, enemyIndex[tile])
 	if tile ~= "b" then
-		self:addSpawn(x, y)
+		self:parseSpawn(tx, ty)
 	end
 	table.insert(self.enemies, e)
 end
 
-function universe.Universe:addSpawn(x, y)
+function universe.Universe:parseSpawn(tx, ty)
+	local x = (tx - 1) * self.level.tileW
+	local y = (ty - 1) * self.level.tileH
 	local ox, oy = self.level.tileW/2, self.level.tileH/2
 	self.world:add({ctype = "spawn"}, x + ox/2, y + oy/2, ox, oy)
 end
@@ -60,7 +64,7 @@ end
 function universe.Universe:parsePlayer(tx, ty)
 	local x = (tx - 1) * self.level.tileW
 	local y = (ty - 1) * self.level.tileH
-	self.player = player.Player(self.world, self.level,self.level.tileW, self.level.tileH, x, y, 45, db.img.player)
+	self.player = player.Player(self.world, self.level,self.level.tileW, self.level.tileH, x, y, 60, db.img.player)
 end
 
 function universe.Universe:parseCoin(tx, ty)

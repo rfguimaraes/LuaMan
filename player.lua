@@ -11,7 +11,7 @@ player.rots =
 	  ["LEFT"] = math.rad(180), 
 		["UP"] = math.rad(270)}
 
-player.MAX_ENERGY = 70
+player.MAX_ENERGY = 80
 player.ENERGY_LOSS = 10
 
 -- TODO: model "power" decayment

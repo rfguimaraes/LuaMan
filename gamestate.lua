@@ -1,5 +1,6 @@
 classer = require "classer"
 univ = require "universe"
+db = require "db"
 
 local gamestate = {}
 
@@ -43,9 +44,11 @@ end
 function gamestate.StartState:draw(dt)
 	gamestate.drawn = true
 	love.graphics.setColor(255, 255, 255, 255)
-	love.graphics.print("LUAMAN", 100, 100, 0, 10, 10)
-	love.graphics.print("Press SPACE to play/pause, Esc to Exit", 200, 300,0,2,2)
-	love.graphics.print("Arrow-keys move the LuaMan", 200, 400, 0,2,2)
+	love.graphics.setFont(db.fonts.title);
+	love.graphics.print("LUAMAN", 100, 50)
+	love.graphics.setFont(db.fonts.default);
+	love.graphics.print("Press SPACE to play/pause, Esc to Exit", 50, 300)
+	love.graphics.print("Arrow-keys move the LuaMan", 50, 400)
 end
 
 -----------------------------------------------------------
@@ -87,8 +90,12 @@ end
 function gamestate.PausedState:draw(dt)
 	gamestate.drawn = true
 	gamestate.scene:drawAndClean(dt)
-	love.graphics.print("GAME PAUSED", 200, 300, 0,2,2)
-	love.graphics.print("Press SPACE to continue, Esc to Exit", 200, 400, 0,2,2)
+	love.graphics.setColor(255, 0, 0, 255)
+	love.graphics.setFont(db.fonts.header)
+	love.graphics.print("GAME PAUSED", 50, 100)
+	love.graphics.setFont(db.fonts.default)
+	love.graphics.print("Press SPACE to continue, Esc to Exit", 50, 200)
+	love.graphics.setColor(255, 255, 255, 255)
 end
 
 -----------------------------------------------------------
@@ -107,8 +114,12 @@ end
 function gamestate.WinState:draw(dt)
 	gamestate.drawn = true
 	gamestate.scene:drawAndClean(dt)
-	love.graphics.print("WIN :D", 200, 200, 0,2,2)
-	love.graphics.print("Press SPACE to restart, Esc to Exit", 200, 400, 0,2,2)
+	love.graphics.setColor(255, 0, 0, 255)
+	love.graphics.setFont(db.fonts.header)
+	love.graphics.print("WIN :D", 50, 100)
+	love.graphics.setFont(db.fonts.default)
+	love.graphics.print("Press SPACE to restart, Esc to Exit", 50, 200)
+	love.graphics.setColor(255, 255, 255, 255)
 end
 
 -----------------------------------------------------------
@@ -127,8 +138,12 @@ end
 function gamestate.LossState:draw(dt)
 	gamestate.drawn = true
 	gamestate.scene:drawAndClean(dt)
-	love.graphics.print("Game Over :(", 200, 200, 0,2,2)
-	love.graphics.print("Press SPACE to restart, Esc to Exit", 200, 400, 0,2,2)
+	love.graphics.setColor(255, 0, 0, 255)
+	love.graphics.setFont(db.fonts.header)
+	love.graphics.print("Game Over :(", 50, 100)
+	love.graphics.setFont(db.fonts.default)
+	love.graphics.print("Press SPACE to restart, Esc to Exit", 50, 200)
+	love.graphics.setColor(255, 255, 255, 255)
 end
 
 -----------------------------------------------------------

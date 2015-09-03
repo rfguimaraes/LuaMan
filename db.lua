@@ -5,6 +5,7 @@ local db = {}
 function db.load()
 	db.loadImages()
 	db.loadMazes()
+	db.loadFonts()
 end
 
 function db.loadImages()
@@ -23,6 +24,15 @@ function db.loadMazes()
 	db.lvl =
 	{
 		maze.Maze(16,16,db.img.maze, data1.tileString, data1.quadInfo)	
+	}
+end
+
+function db.loadFonts()
+	local fontPath = "assets/fonts/"
+	db.fonts = {
+		title = love.graphics.newFont(fontPath.."Cubellan Bold.ttf", 60),
+		header = love.graphics.newFont(fontPath.."Cubellan.ttf", 50),
+		default = love.graphics.newFont(fontPath.."Cubellan.ttf", 20)
 	}
 end
 	
