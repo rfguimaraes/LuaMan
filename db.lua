@@ -32,7 +32,9 @@ function db.loadFonts()
 	db.fonts = {
 		title = love.graphics.newFont(fontPath.."Cubellan Bold.ttf", 60),
 		header = love.graphics.newFont(fontPath.."Cubellan.ttf", 50),
-		default = love.graphics.newFont(fontPath.."Cubellan.ttf", 20)
+		default = love.graphics.newFont(fontPath.."Cubellan.ttf", 20),
+		UI = love.graphics.newFont(fontPath.."Cubellan.ttf", 15)
+
 	}
 end
 	

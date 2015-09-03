@@ -4,6 +4,7 @@ maze = require "maze"
 db = require "db"
 enemy = require "enemy"
 pill = require "pill"
+bar = require "bar"
 
 local universe = {}
 
@@ -17,6 +18,7 @@ function universe.Universe:_init(gridSize)
 	self.enemies = {}
 	self.player = nil
 	self.level = db.lvl[1]
+	self.powerbar = bar.Bar(100, 500, 100, 8, 0)
 end
 
 -- Populate
@@ -89,6 +91,7 @@ function universe.Universe:update(dt)
 		e:update(self.player.gotPill, self.player.status, dt)
 	end
 	self.player.gotPill = false
+	self.powerbar.val = self.player.energy/player.MAX_ENERGY
 end
 
 -- Draw
@@ -99,6 +102,7 @@ function universe.Universe:drawAndClean(dt)
 	self:drawAndCleanList(self.pills, dt)
 	self:drawAndCleanList(self.enemies, dt)
 	self.player:draw(dt)
+	self.powerbar:draw(dt)
 end
 
 function universe.Universe:drawAndCleanList(list, dt)
