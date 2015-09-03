@@ -12,7 +12,7 @@ function db.loadImages()
 	local imgPath = "assets/images/"
 	db.img  = 
 	{
-		player = love.graphics.newImage(imgPath.."luaman.png"),
+		player = love.graphics.newImage(imgPath.."luaman2.png"),
 		maze = love.graphics.newImage(imgPath.."maze.png"),
 		enemy = love.graphics.newImage(imgPath.."ghost.png")
 	}

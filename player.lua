@@ -20,19 +20,32 @@ function player.Player:_init(world, level, tileW, tileH, x, y, speed, img)
 	self:initAnims()
 	self.energy = 0
 	self.gotPill = false
+	self.countdown = 0
 end
 
 function player.Player:initAnims()
 	local walkFrames = self.grid('1-4',1, '3-1', 1)
 	self.walkAnim = anim8.newAnimation(walkFrames, 0.05)
 
+	local dieFrames = self.grid('5-10',1)
+	self.dieAnim = anim8.newAnimation(dieFrames, 0.05, 'pauseAtEnd')
+
 	self.animations = { normal = self.walkAnim,
-						power = self.walkAnim
+						power = self.walkAnim,
+						die = self.dieAnim
 	}
 end
 
 function player.Player:update(dt)
 	actor.Actor.update(self, dt)
+	
+	if self.status == "die" then
+		self.countdown = self.countdown + dt
+		if self.countdown >= 0.05 * 5 then
+			self.alive = false
+		end
+		return
+	end
 	self.energy = self.energy - player.ENERGY_LOSS * dt
 	if self.energy <= 0 then
 		self.energy = 0
@@ -105,11 +118,12 @@ function player.Player:draw(dt)
 	angle = player.rots[self.dir]
 	ox = self.tileW/2
 	oy = self.tileH/2
-	self.walkAnim:draw(self.tileset, self.x + ox, self.y + oy, angle, 1, 1, ox, oy)
+	self.animations[self.status]:draw(self.tileset, self.x + ox, self.y + oy, angle, 1, 1, ox, oy)
 end
 
 function player.Player:kill()
-	self.alive = false
+	self.status = "die"
+	self.countdown = 0
 end
 
 return player
