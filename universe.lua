@@ -98,10 +98,15 @@ function universe.Universe:drawAndClean(dt)
 end
 
 function universe.Universe:drawAndCleanList(list, dt)
+	-- Doing both at the same time causes an undesired "flicker"
 	for i,x in ipairs(list) do
 		if x.alive then
 			x:draw(dt)
-		else
+		end
+	end
+
+	for i,x in ipairs(list) do
+		if not x.alive then
 			table.remove(list ,i)
 		end
 	end

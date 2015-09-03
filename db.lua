@@ -19,7 +19,7 @@ end
 
 function db.loadMazes()
 	local mazePath = "assets/mazes/"
-	local data1 = love.filesystem.load(mazePath.."level1.lua")()
+	local data1 = love.filesystem.load(mazePath.."level2.lua")()
 	db.lvl =
 	{
 		maze.Maze(16,16,db.img.maze, data1.tileString, data1.quadInfo)	

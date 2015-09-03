@@ -36,7 +36,6 @@ function enemy.Enemy:update(gotPill, cur, dt)
 
 	if self.status == "normal" and toFear then
 		self.status = "fear"
-		io.input()
 	elseif self.status == "fear" and noFear then
 		self.status = "normal"
 	end
