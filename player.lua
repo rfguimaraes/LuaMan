@@ -70,15 +70,29 @@ function player.Player:update(dt)
 end
 
 function player.Player:act()
-	if love.keyboard.isDown('left','a') then
-		self.ndir = "LEFT"
-	elseif love.keyboard.isDown('right','d') then
-		self.ndir = "RIGHT"
-	elseif love.keyboard.isDown('up','w') then
-		self.ndir = "UP"
-	elseif love.keyboard.isDown('down','s') then
-		self.ndir = "DOWN"
-	end
+	-- if love.keyboard.isDown('left','a') then
+	-- 	self.ndir = "LEFT"
+	-- elseif love.keyboard.isDown('right','d') then
+	-- 	self.ndir = "RIGHT"
+	-- elseif love.keyboard.isDown('up','w') then
+	-- 	self.ndir = "UP"
+	-- elseif love.keyboard.isDown('down','s') then
+	-- 	self.ndir = "DOWN"
+	-- end
+
+
+end
+
+function player.Player:act_eat()
+end
+
+function player.Player:act_getPill()
+end
+
+function player.Player:act_hunt()
+end
+
+function player.Player:act_run()
 end
 
 function player.Player:handleCollisions(cols, len)
