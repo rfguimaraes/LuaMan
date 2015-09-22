@@ -1,8 +1,10 @@
 classer = require "classer"
 anim8 = require "lib.anim8"
 actor = require "actor"
+fsm = require "fsm"
 
 local player = {}
+
 player.Player = classer.ncls(actor.Actor)
 
 player.rots = 
@@ -13,14 +15,28 @@ player.rots =
 
 player.MAX_ENERGY = 100
 player.ENERGY_LOSS = 10
+player.fsm_table =
+{
+	{"eat", "ok", "eat", nil},
+	{"eat", "danger", "pill_near", nil},
+	{"eat", "only_pill", "get_pill", nil},
+	{"pill_near", "yes", "get_pill", nil},
+	{"pill_near", "no", "run", nil},
+	{"get_pill", "sucess", "hunt", nil},
+	{"get_pill", "fail", "run", nil},
+	{"run", "ok", "eat", nil},
+	{"run", "danger", "pill_near", nil},
+	{"hunt", "power_off", "eat", nil},
+}
 
--- TODO: model "power" decayment
 function player.Player:_init(world, level, tileW, tileH, x, y, speed, img)
 	actor.Actor._init(self, world, level, "player", tileW, tileH, x, y, speed, img)
 	self:initAnims()
 	self.energy = 0
 	self.gotPill = false
 	self.countdown = 0
+	self.score = 0
+	self.fsm = fsm.FSM("eat", player.fsm_table)
 end
 
 function player.Player:initAnims()
@@ -28,7 +44,7 @@ function player.Player:initAnims()
 	self.walkAnim = anim8.newAnimation(walkFrames, 0.05)
 
 	local dieFrames = self.grid('5-10',1)
-	self.dieAnim = anim8.newAnimation(dieFrames, 0.05, 'pauseAtEnd')
+	self.dieAnim = anim8.newAnimation(dieFrames, 0.08, 'pauseAtEnd')
 
 	self.animations = { normal = self.walkAnim,
 						power = self.walkAnim,
@@ -41,7 +57,7 @@ function player.Player:update(dt)
 	
 	if self.status == "die" then
 		self.countdown = self.countdown + dt
-		if self.countdown >= 0.05 * 5 then
+		if self.countdown >= 0.08 * 5 then
 			self.alive = false
 		end
 		return
@@ -69,11 +85,13 @@ function player.Player:handleCollisions(cols, len)
 	for i=1,len do
   		if cols[i].other.ctype == "coin" then
     		cols[i].other:kill()
+    		self.score = self.score + 10
     	elseif cols[i].other.ctype == "pill" then
     		cols[i].other:kill()
     		self.energy = player.MAX_ENERGY
     		self.status = "power"
     		self.gotPill = true
+    		self.score = self.score + 50
     	elseif cols[i].other.ctype == "enemy" then
     		self:versusEnemy(cols[i].other)
     	end
@@ -87,8 +105,7 @@ function player.Player:versusEnemy(enemy)
 	elseif self.status == "normal" then
 		assert(enemy.status ~= "fear", "Invalid state!\n")
 	elseif enemy.status ~= "eye" then
-		-- TODO: Earn points maybe?
-		-- Enemy eaten
+		self.score = self.score + 100
 	end
 end
 

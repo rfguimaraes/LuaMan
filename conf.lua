@@ -10,5 +10,4 @@ function love.conf(t)
 
 	-- For Windows debugging
 	t.console = true
-	t.fps = 30
 end
