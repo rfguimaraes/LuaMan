@@ -22,6 +22,10 @@ function pq.PQ:_init()
 	self.elements = {}
 end
 
+function pq.PQ:empty()
+	return (#self.elements) == 0
+end
+
 function pq.PQ:fixUp(k)
 	while k > 1 and self.elements[k]:before(self.elements[math.floor(k/2)]) do
 		self.elements[math.floor(k/2)], self.elements[k] = self.elements[k], self.elements[math.floor(k/2)]
@@ -50,6 +54,9 @@ function pq.PQ:insert(item, priority)
 end
 
 function pq.PQ:getNext()
+	if self:empty()
+		return nil
+	end
 	local res = self.elements[1]
 	table.remove(self.elements, 1)
 	local last = self.elements[#self.elements]
