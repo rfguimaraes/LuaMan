@@ -59,6 +59,18 @@ function maze.Maze:curTile(x, y)
 	return pos
 end
 
+function maze.Maze:getTile(x, y)
+	local tx = math.floor(x/self.tileW) + 1
+	local ty = math.floor(y/self.tileH) + 1
+	return self.tileTable[tx][ty]
+end
+
+function maze.Maze:setTile(x, y, data)
+	local tx = math.floor(x/self.tileW) + 1
+	local ty = math.floor(y/self.tileH) + 1
+	self.tileTable[tx][ty] = data
+end
+
 function maze.Maze:draw()
 	love.graphics.draw(self.tileBatch)
 end

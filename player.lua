@@ -70,17 +70,15 @@ function player.Player:update(dt)
 end
 
 function player.Player:act()
-	-- if love.keyboard.isDown('left','a') then
-	-- 	self.ndir = "LEFT"
-	-- elseif love.keyboard.isDown('right','d') then
-	-- 	self.ndir = "RIGHT"
-	-- elseif love.keyboard.isDown('up','w') then
-	-- 	self.ndir = "UP"
-	-- elseif love.keyboard.isDown('down','s') then
-	-- 	self.ndir = "DOWN"
-	-- end
-
-
+	if love.keyboard.isDown('left','a') then
+		self.ndir = "LEFT"
+	elseif love.keyboard.isDown('right','d') then
+		self.ndir = "RIGHT"
+	elseif love.keyboard.isDown('up','w') then
+		self.ndir = "UP"
+	elseif love.keyboard.isDown('down','s') then
+		self.ndir = "DOWN"
+	end
 end
 
 function player.Player:act_eat()
@@ -100,12 +98,14 @@ function player.Player:handleCollisions(cols, len)
   		if cols[i].other.ctype == "coin" then
     		cols[i].other:kill()
     		self.score = self.score + 10
+    		self.level:setTile(cols[i].other.x, cols[i].other.y, ' ')
     	elseif cols[i].other.ctype == "pill" then
     		cols[i].other:kill()
     		self.energy = player.MAX_ENERGY
     		self.status = "power"
     		self.gotPill = true
     		self.score = self.score + 50
+    		self.level:setTile(cols[i].other.x, cols[i].other.y, ' ')
     	elseif cols[i].other.ctype == "enemy" then
     		self:versusEnemy(cols[i].other)
     	end

@@ -23,9 +23,9 @@ function pq.PQ:_init()
 end
 
 function pq.PQ:fixUp(k)
-	while k > 1 and self.elements[k]:before(self.elements[k//2]) do
-		self.elements[k//2], self.elements[k] = self.elements[k], self.elements[k//2]
-		k = k//2
+	while k > 1 and self.elements[k]:before(self.elements[math.floor(k/2)]) do
+		self.elements[math.floor(k/2)], self.elements[k] = self.elements[k], self.elements[math.floor(k/2)]
+		k = floor(math.floor(k/2))
 	end
 end
 
