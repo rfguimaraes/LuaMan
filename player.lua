@@ -25,6 +25,13 @@ player.fsm_table =
 	{"hunt", "power_off_danger", "eat", nil}
 }
 
+player.costTable =
+{
+	eat = {["."] = 0, ["u"] = 5, ["?"] = 2, ["ghost"] = 10},
+	run = {["."] = 2, ["u"] = 0, ["?"] = 2, ["ghost"] = 15},
+	hunt = {["."] = 1, ["u"] = 7, ["?"] = 1, ["ghost"] = 0}
+}
+
 function player.Player:_init(universe, level, tileW, tileH, x, y, speed, img)
 	actor.Actor._init(self, universe.world, level, "player", tileW, tileH, x, y, speed, img)
 	self.universe = universe
@@ -193,9 +200,9 @@ end
 
 function player.Player:bestRunPoint()
 	goals = player.Player.runpoints
-	local best, max = goals[1], util.l1Norm(point, goals[1])
+	local best, max = goals[1], avgDistGhosts(goals[1])
 	for _, goal in ipairs(goals) do
-		aux = avgDistGhosts(runpoints)
+		aux = avgDistGhosts(goal)
 		if aux > max then
 			max = aux
 			best = goal
@@ -216,10 +223,9 @@ end
 
 function player.Player:huntHeuristic(point)
 	goals = {}
-	goal = self.level:curTile(ghost.x, ghost.y)
 	for _, ghost in ipairs(self.universe.enemies) do
 		if ghost.status ~= "eye" then
-			table.insert(goals, ghost)
+			table.insert(goals, self.level:curTile(ghost.x, ghost.y))
 		end
 	end
 	if #goals == 0 then
@@ -233,12 +239,57 @@ function player.Player:huntHeuristic(point)
 end
 
 function player.Player:huntGoalCheck(point)
+	goals = {}
+	for _, ghost in ipairs(self.universe.enemies) do
+		if ghost.status ~= "eye" then
+			table.insert(goals, self.level:curTile(ghost.x, ghost.y))
+		end
+	end
+	if #goals == 0 then
+		return true
+	end
 	for _,goal in ipairs(self.universe.enemies) do
 		if util.phash(point) == util.phash({x = goal.x, y = goal.y}) then
 			return true
 		end
 	end
 	return false
+end
+
+----------
+
+function player.Player:heuristic(point)
+	if self.state == "eat" then
+		return self:eatHeuristic(point)
+	elseif self.state == "run" then
+		return self:runHeuristic(point)
+	else
+		return self:huntHeuristic(point)
+	end
+end
+
+function player.Player:goalCheck(point)
+	if self.state == "eat" then
+		return self:eatGoalCheck(point)
+	elseif self.state == "run" then
+		return self:runGoalCheck(point)
+	else
+		return self:huntGoalCheck(point)
+	end
+end
+
+function player.Player:eval(point)
+	if self.level.tileTable[point.x][point.y] == "." then
+		tile = "."
+	elseif self.level.tileTable[point.x][point.y] == "u" then
+		tile = "u"
+	else
+		tile = "?"
+	end
+	
+	contentCost = player.costTable[self.state][tile]
+	dangerFactor = player.costTable[self.state]["ghost"] * self:avgDistGhosts(point)
+	return self:heuristic(point) + contentCost + dangerFactor
 end
 
 return player
