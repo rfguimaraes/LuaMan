@@ -66,7 +66,7 @@ end
 function universe.Universe:parsePlayer(tx, ty)
 	local x = (tx - 1) * self.level.tileW
 	local y = (ty - 1) * self.level.tileH
-	self.player = player.Player(self.world, self.level,self.level.tileW, self.level.tileH, x, y, 60, db.img.player)
+	self.player = player.Player(self, self.level,self.level.tileW, self.level.tileH, x, y, 60, db.img.player)
 end
 
 function universe.Universe:parseCoin(tx, ty)

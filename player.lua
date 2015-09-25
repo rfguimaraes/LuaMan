@@ -17,16 +17,12 @@ player.MAX_ENERGY = 100
 player.ENERGY_LOSS = 10
 player.fsm_table =
 {
-	{"eat", "ok", "eat", nil},
-	{"eat", "danger", "pill_near", nil},
-	{"eat", "only_pill", "get_pill", nil},
-	{"pill_near", "yes", "get_pill", nil},
-	{"pill_near", "no", "run", nil},
-	{"get_pill", "sucess", "hunt", nil},
-	{"get_pill", "fail", "run", nil},
-	{"run", "ok", "eat", nil},
-	{"run", "danger", "pill_near", nil},
-	{"hunt", "power_off", "eat", nil},
+	{"eat", "power_on", "hunt", nil},
+	{"eat", "danger", "run", nil},
+	{"run", "safe", "eat", nil},
+	{"run", "power_on", "hunt", nil},
+	{"hunt", "power_off_safe", "eat", nil},
+	{"hunt", "power_off_danger", "eat", nil}
 }
 
 function player.Player:_init(universe, level, tileW, tileH, x, y, speed, img)
@@ -42,13 +38,13 @@ function player.Player:_init(universe, level, tileW, tileH, x, y, speed, img)
 end
 
 function player.Player:initRunPoints()
-	local lw = self.level.width, lh = self.level.height
+	local lw, lh = self.level.width, self.level.height
 	self.runpoints = {}
-	table.insert(goals, {x = 2, y = 2})
-	table.insert(goals, {x = 2, y = lh - 1})
-	table.insert(goals, {x = lw - 1, y = 2)
-	table.insert(goals, {x = lw - 1, y = lh - 1)
-	table.insert(goals, math.floor(lw/2), math.floor(lh/2))
+	table.insert(self.runpoints, {x = 2, y = 2})
+	table.insert(self.runpoints, {x = 2, y = lh - 1})
+	table.insert(self.runpoints, {x = lw - 1, y = 2})
+	table.insert(self.runpoints, {x = lw - 1, y = lh - 1})
+	table.insert(self.runpoints, math.floor(lw/2), math.floor(lh/2))
 end
 
 function player.Player:initAnims()
@@ -175,27 +171,27 @@ end
 
 ---------------------------
 
-function h_eat(point)
+function player.Player:eatHeuristic(point)
 	return 0
 end
 
-function eat_gc(point)
+function player.Player:eatGoalCheck(point)
 	data = self.level.tileTable[point.x][point.y]
 	return data == '.' or data == 'u'
 end
 
 ---------
 
-function avgDistGhosts(point)
+function player.Player:avgDistGhosts(point)
 	dist = 0
-	for _,ghost in ipairs(self.universe.enemies)
+	for _,ghost in ipairs(self.universe.enemies) do
 		goal = self.level:curTile(ghost.x, ghost.y)
 		dist = dist + util.l1Norm(point, goal)
 	end
 	return dist/#self.universe.enemies
 end
 
-function bestRunPoint()
+function player.Player:bestRunPoint()
 	goals = player.Player.runpoints
 	local best, max = goals[1], util.l1Norm(point, goals[1])
 	for _, goal in ipairs(goals) do
@@ -208,20 +204,20 @@ function bestRunPoint()
 	return goal
 end
 
-function h_run(point)
+function player.Player:runHeuristic(point)
 	return util.l1Norm(bestRunPoint(), point)
 end
 
-function run_gc(point)
+function player.Player:runGoalCheck(point)
 	return util.phash(bestRunPoint()) == util.phash(point)
 end
 
 ---------
 
-function h_hunt(point)
+function player.Player:huntHeuristic(point)
 	goals = {}
 	goal = self.level:curTile(ghost.x, ghost.y)
-	for _, ghost in ipairs(self.universe.enemies)
+	for _, ghost in ipairs(self.universe.enemies) do
 		if ghost.status ~= "eye" then
 			table.insert(goals, ghost)
 		end
@@ -236,9 +232,9 @@ function h_hunt(point)
 	return min
 end
 
-function hunt_gc(point)
-	for _,goal in ipairs(self.universe.enemies)
-		if util.phash(point) == util.phash({x = goal.x, y = goal.y) then
+function player.Player:huntGoalCheck(point)
+	for _,goal in ipairs(self.universe.enemies) do
+		if util.phash(point) == util.phash({x = goal.x, y = goal.y}) then
 			return true
 		end
 	end
