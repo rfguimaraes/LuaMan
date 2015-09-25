@@ -65,19 +65,16 @@ function actor.Actor:checkDir(dir)
 	return c ~= nil and not c:match(actor.Actor.blocks)
 end
 
-function actor.Actor:neighboors(point)
-	local neighboors = {}
-
-	for key, _ in pairs(util.dirs) do
-		if self:checkDir(key) then
-			tmp = self:getTileCoords()
-			tmp.x = point.x + util.dirs[key].x
-			tmp.y = point.y + util.dirs[key].y
-			table.insert(neighboors, {x = tmp.x, y = tmp.y})
+function actor.Actor:neighbors(point)
+	local neighbors = {}
+	for key, val in pairs(self.level:getNeighbors(point.x, point.y)) do
+		c = self.level.tileTable[val.x][val.y]
+		if not c:match(actor.Actor.blocks) then
+			table.insert(neighbors, {x = val.x, y = val.y})
 		end
 	end
 
-	return neighboors
+	return neighbors
 end
 
 function actor.Actor:turn()
@@ -95,6 +92,7 @@ function actor.Actor:turn()
 end
 
 function actor.Actor:move(dt)
+	local prevTile = self:getTileCoords()
 	if self:turn() then
 		if util.point_equal(self.marker, {x = self.x + self.ox, y = self.y + self.oy}, 3) then
 			self.dir = self.ndir
@@ -111,6 +109,7 @@ function actor.Actor:move(dt)
  	self.x, self.y = tx, ty
   	-- deal with the collisions
   	self:handleCollisions(cols, len)
+  	--if util.phash
 end
 
 -- Collisions

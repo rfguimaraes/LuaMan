@@ -52,6 +52,15 @@ function maze.Maze:lookAround(x, y)
 	return dir
 end
 
+function maze.Maze:getNeighbors(tx, ty)
+	local neighbors = {}
+	if (tx <= self.width) then neighbors.RIGHT = {x = tx + 1, y = ty} end
+	if (tx >= 1) then neighbors.LEFT = {x = tx - 1, y = ty} end
+	if (ty >= 1) then neighbors.UP = {x = tx, y = ty - 1} end
+	if (ty <= self.height) then neighbors.DOWN = {x = tx, y = ty + 1} end
+	return neighbors
+end
+
 function maze.Maze:curTile(x, y)
 	local pos = {}
 	pos.x = math.floor(x/self.tileW) + 1

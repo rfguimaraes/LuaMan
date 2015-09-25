@@ -28,8 +28,8 @@ player.fsm_table =
 
 player.costTable =
 {
-	eat = {["."] = 0, ["u"] = 5, ["?"] = 2, ["ghost"] = 10},
-	run = {["."] = 2, ["u"] = 0, ["?"] = 2, ["ghost"] = 15},
+	eat = {["."] = 0, ["u"] = 5, ["?"] = 2, ["ghost"] = 100},
+	run = {["."] = 2, ["u"] = 0, ["?"] = 2, ["ghost"] = 150},
 	hunt = {["."] = 1, ["u"] = 7, ["?"] = 1, ["ghost"] = 0}
 }
 
@@ -53,9 +53,9 @@ function player.Player:_init(universe, level, tileW, tileH, x, y, speed, img)
 	self.gotPill = false
 	self.countdown = 0
 	self.score = 0
-	self.fsm = fsm.FSM("eat", player.fsm_table)
+	self.fsm = fsm.FSM("hunt", player.fsm_table)
 	self:initRunPoints()
-	self.state = "eat"
+	self.state = "hunt"
 end
 
 function player.Player:initRunPoints()
@@ -214,6 +214,23 @@ function player.Player:avgDistGhosts(point)
 	return dist/#self.universe.enemies
 end
 
+function player.Player:minDistGhosts(point)
+	goals = {}
+	for _, ghost in ipairs(self.universe.enemies) do
+		if ghost.status ~= "eye" then
+			table.insert(goals, self.level:curTile(ghost.x, ghost.y))
+		end
+	end
+	if #goals == 0 then
+		return 0
+	end
+	local min = util.l1Norm(point, goals[1])
+	for _, goal in ipairs(goals) do
+		min = math.min(min, util.l1Norm(point, {x = goal.x, y = goal.y}))
+	end
+	return min
+end
+
 function player.Player:bestRunPoint()
 	goals = player.Player.runpoints
 	local best, max = goals[1], avgDistGhosts(goals[1])
@@ -258,13 +275,14 @@ function player.Player:huntGoalCheck(point)
 	goals = {}
 	for _, ghost in ipairs(self.universe.enemies) do
 		if ghost.status ~= "eye" then
-			table.insert(goals, self.level:curTile(ghost.x, ghost.y))
+			local tmp = ghost:getTileCoords()
+			table.insert(goals, tmp)
 		end
 	end
 	if #goals == 0 then
 		return true
 	end
-	for _,goal in ipairs(self.universe.enemies) do
+	for _,goal in ipairs(goals) do
 		if util.phash(point) == util.phash({x = goal.x, y = goal.y}) then
 			return true
 		end
@@ -295,6 +313,8 @@ function player.Player:goalCheck(point)
 end
 
 function player.Player:eval(point)
+	local tile = nil
+
 	if self.level.tileTable[point.x][point.y] == "." then
 		tile = "."
 	elseif self.level.tileTable[point.x][point.y] == "u" then
@@ -302,12 +322,13 @@ function player.Player:eval(point)
 	else
 		tile = "?"
 	end
-	-- print(tile)
-	-- print(self.state)
-	contentCost = player.costTable[self.state][tile]
-	dangerFactor = player.costTable[self.state]["ghost"] * self:avgDistGhosts(point)
+	local contentCost = player.costTable[self.state][tile]
+	local dangerFactor = player.costTable[self.state]["ghost"] * (1/(self:minDistGhosts(point) + 1))
+	if self.state == "hunt" then
+		dangerFactor = 0
+	end
+
 	return self:heuristic(point) + contentCost + dangerFactor
 end
-
 
 return player

@@ -31,23 +31,24 @@ function util.aStar(indv, level)
 	ancestor[util.phash(start)] = nil
 	accum[util.phash(start)] = 0
 
-	print("START")
-
+	--print("START")
+	print(util.phash(start))
+	print(indv:huntHeuristic(start))
 
 	while not fringe:empty() do
-		print("====")
+		--print("====")
 		cur = fringe:getNext()
-		print(util.phash(cur))
+		--print(util.phash(cur))
+
 
 		if indv:goalCheck(cur) then
-			print("GOAL")
-			print(util.phash(cur))
+			--print(util.phash(cur))
 			break
 		end
-		print("neigh:")
-		for _, neigh in ipairs(indv:neighboors(cur)) do
-			new_cost = accum[util.phash(cur)] + 1 + indv:eval()
-			print("\t" .. util.phash(neigh) .. " " .. new_cost)
+		--print("neigh:")
+		for _, neigh in ipairs(indv:neighbors(cur)) do
+			new_cost = accum[util.phash(cur)] + 1 + indv:eval(neigh)
+			--print("\t" .. util.phash(neigh) .. " " .. new_cost)
 			if not accum[util.phash(neigh)] or new_cost < accum[util.phash(neigh)] then
 				accum[util.phash(neigh)] = new_cost
 				cost = new_cost
@@ -68,6 +69,8 @@ function util.aStar(indv, level)
 	for index = #path,1,-1 do
         table.insert(res, path[index])
     end
+
+    io.input()
 
     return res
 end

@@ -9,7 +9,7 @@ enemy.Enemy = classer.ncls(actor.Actor)
 enemy.Enemy.blocks = "[#]"
 
 function enemy.Enemy:_init(world, level, tileW, tileH, x, y, speed, img, index)
-	actor.Actor._init(self, world, level, "enemy", tileW, tileH, x, y, speed, img)
+	actor.Actor._init(self, world, level, "enemy", tileW, tileH, x, y, 0, img)
 	self.index = index
 	self:initAnims()
 	self.lastUpdate = love.timer.getTime()
