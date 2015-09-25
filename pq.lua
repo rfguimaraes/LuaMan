@@ -54,7 +54,7 @@ function pq.PQ:insert(item, priority)
 end
 
 function pq.PQ:getNext()
-	if self:empty()
+	if self:empty() then
 		return nil
 	end
 	local res = self.elements[1]

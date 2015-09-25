@@ -17,7 +17,7 @@ function util.phash(p)
 	return p.x .. ":" .. p.y
 end
 
-function util.manhattan(p1, p2)
+function util.l1Norm(p1, p2)
 	return math.abs(p1.x - p2.x) + math.abs(p1.y - p2.y)
 end
 
@@ -37,7 +37,7 @@ function util.aStar(level, h, start, goal_check)
 	while not fringe:empty() do
 		cur = fringe:getNext()
 
-		if goal_check(cur)
+		if goal_check(cur) then
 			break
 		end
 
@@ -48,14 +48,16 @@ function util.aStar(level, h, start, goal_check)
 				cost = new_cost + h(neigh)
 				fringe:insert(neigh, cost)
 				ancestor[neigh] = cur
+			end
 		end
 	end
 
 	path = {}
 	table.insert(path, cur)
-	while util.phash(cur) != util.phash(start):
+	while util.phash(cur) ~= util.phash(start) do
 	   cur = ancestor[util.phash(cur)]
 	   table.insert(path, cur)
+	end
 
 	res = {}
 	for index = #path,1,-1 do

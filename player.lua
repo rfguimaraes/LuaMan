@@ -29,14 +29,26 @@ player.fsm_table =
 	{"hunt", "power_off", "eat", nil},
 }
 
-function player.Player:_init(world, level, tileW, tileH, x, y, speed, img)
-	actor.Actor._init(self, world, level, "player", tileW, tileH, x, y, speed, img)
+function player.Player:_init(universe, level, tileW, tileH, x, y, speed, img)
+	actor.Actor._init(self, universe.world, level, "player", tileW, tileH, x, y, speed, img)
+	self.universe = universe
 	self:initAnims()
 	self.energy = 0
 	self.gotPill = false
 	self.countdown = 0
 	self.score = 0
 	self.fsm = fsm.FSM("eat", player.fsm_table)
+	self:initRunPoints()
+end
+
+function player.Player:initRunPoints()
+	local lw = self.level.width, lh = self.level.height
+	self.runpoints = {}
+	table.insert(goals, {x = 2, y = 2})
+	table.insert(goals, {x = 2, y = lh - 1})
+	table.insert(goals, {x = lw - 1, y = 2)
+	table.insert(goals, {x = lw - 1, y = lh - 1)
+	table.insert(goals, math.floor(lw/2), math.floor(lh/2))
 end
 
 function player.Player:initAnims()
@@ -82,15 +94,19 @@ function player.Player:act()
 end
 
 function player.Player:act_eat()
+	-- A* until coin/power
 end
 
 function player.Player:act_getPill()
+	-- A* until power
 end
 
 function player.Player:act_hunt()
+	-- A* until nearest ghost
 end
 
 function player.Player:act_run()
+	-- A* until "best 'anchor point'"
 end
 
 function player.Player:handleCollisions(cols, len)
@@ -155,6 +171,78 @@ end
 function player.Player:kill()
 	self.status = "die"
 	self.countdown = 0
+end
+
+---------------------------
+
+function h_eat(point)
+	return 0
+end
+
+function eat_gc(point)
+	data = self.level.tileTable[point.x][point.y]
+	return data == '.' or data == 'u'
+end
+
+---------
+
+function avgDistGhosts(point)
+	dist = 0
+	for _,ghost in ipairs(self.universe.enemies)
+		goal = self.level:curTile(ghost.x, ghost.y)
+		dist = dist + util.l1Norm(point, goal)
+	end
+	return dist/#self.universe.enemies
+end
+
+function bestRunPoint()
+	goals = player.Player.runpoints
+	local best, max = goals[1], util.l1Norm(point, goals[1])
+	for _, goal in ipairs(goals) do
+		aux = avgDistGhosts(runpoints)
+		if aux > max then
+			max = aux
+			best = goal
+		end
+	end
+	return goal
+end
+
+function h_run(point)
+	return util.l1Norm(bestRunPoint(), point)
+end
+
+function run_gc(point)
+	return util.phash(bestRunPoint()) == util.phash(point)
+end
+
+---------
+
+function h_hunt(point)
+	goals = {}
+	goal = self.level:curTile(ghost.x, ghost.y)
+	for _, ghost in ipairs(self.universe.enemies)
+		if ghost.status ~= "eye" then
+			table.insert(goals, ghost)
+		end
+	end
+	if #goals == 0 then
+		return 0
+	end
+	local min = util.l1Norm(point, goals[1])
+	for _, goal in ipairs(goals) do
+		min = math.min(min, util.l1Norm(point, {x = goal.x, y = goal.y}))
+	end
+	return min
+end
+
+function hunt_gc(point)
+	for _,goal in ipairs(self.universe.enemies)
+		if util.phash(point) == util.phash({x = goal.x, y = goal.y) then
+			return true
+		end
+	end
+	return false
 end
 
 return player
