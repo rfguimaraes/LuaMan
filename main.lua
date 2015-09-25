@@ -7,7 +7,7 @@ univ = require "universe"
 enemy = require "enemy"
 gamestate = require "gamestate"
 
-debug = true
+debug = nil
 quit = false
 curState = gamestate.state["start"]
 nextState = curState

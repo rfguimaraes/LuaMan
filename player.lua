@@ -2,6 +2,7 @@ classer = require "classer"
 anim8 = require "lib.anim8"
 actor = require "actor"
 fsm = require "fsm"
+util = require "util"
 
 local player = {}
 
@@ -32,6 +33,18 @@ player.costTable =
 	hunt = {["."] = 1, ["u"] = 7, ["?"] = 1, ["ghost"] = 0}
 }
 
+function player.Player:toEat()
+	self.state = "eat"
+end
+
+function player.Player:toRun()
+	self.state = "run"
+end
+
+function player.Player:toHunt()
+	self.state = "hunt"
+end
+
 function player.Player:_init(universe, level, tileW, tileH, x, y, speed, img)
 	actor.Actor._init(self, universe.world, level, "player", tileW, tileH, x, y, speed, img)
 	self.universe = universe
@@ -42,6 +55,7 @@ function player.Player:_init(universe, level, tileW, tileH, x, y, speed, img)
 	self.score = 0
 	self.fsm = fsm.FSM("eat", player.fsm_table)
 	self:initRunPoints()
+	self.state = "eat"
 end
 
 function player.Player:initRunPoints()
@@ -94,6 +108,8 @@ function player.Player:act()
 	elseif love.keyboard.isDown('down','s') then
 		self.ndir = "DOWN"
 	end
+
+	util.aStar(self, self.level)
 end
 
 function player.Player:act_eat()
@@ -286,10 +302,12 @@ function player.Player:eval(point)
 	else
 		tile = "?"
 	end
-	
+	-- print(tile)
+	-- print(self.state)
 	contentCost = player.costTable[self.state][tile]
 	dangerFactor = player.costTable[self.state]["ghost"] * self:avgDistGhosts(point)
 	return self:heuristic(point) + contentCost + dangerFactor
 end
+
 
 return player

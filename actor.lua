@@ -56,9 +56,28 @@ end
 
 -- Movement
 
+function actor.Actor:getTileCoords()
+	return self.level:curTile(self.x + self.ox, self.y + self.oy)
+end
+
 function actor.Actor:checkDir(dir)
 	local c = self.level:lookAround(self.x + self.ox, self.y + self.oy)[dir]
 	return c ~= nil and not c:match(actor.Actor.blocks)
+end
+
+function actor.Actor:neighboors(point)
+	local neighboors = {}
+
+	for key, _ in pairs(util.dirs) do
+		if self:checkDir(key) then
+			tmp = self:getTileCoords()
+			tmp.x = point.x + util.dirs[key].x
+			tmp.y = point.y + util.dirs[key].y
+			table.insert(neighboors, {x = tmp.x, y = tmp.y})
+		end
+	end
+
+	return neighboors
 end
 
 function actor.Actor:turn()

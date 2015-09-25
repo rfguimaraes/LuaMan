@@ -21,11 +21,8 @@ function util.l1Norm(p1, p2)
 	return math.abs(p1.x - p2.x) + math.abs(p1.y - p2.y)
 end
 
-function h(p1, p2)
-
-end
-
-function util.aStar(level, h, start, goal_check)
+function util.aStar(indv, level)
+	start = indv.level:curTile(indv.x, indv.y)
 	fringe = pq.PQ()
 	fringe:insert(start, 0)
 	ancestor = {}
@@ -34,20 +31,28 @@ function util.aStar(level, h, start, goal_check)
 	ancestor[util.phash(start)] = nil
 	accum[util.phash(start)] = 0
 
-	while not fringe:empty() do
-		cur = fringe:getNext()
+	print("START")
 
-		if goal_check(cur) then
+
+	while not fringe:empty() do
+		print("====")
+		cur = fringe:getNext()
+		print(util.phash(cur))
+
+		if indv:goalCheck(cur) then
+			print("GOAL")
+			print(util.phash(cur))
 			break
 		end
-
-		for neigh in level:neighboors(cur) do
-			new_cost = accum[util.phash(cur)] + 1
-			if not accum[util.phash(neigh)] or new_cost < accum[neigh] then
+		print("neigh:")
+		for _, neigh in ipairs(indv:neighboors(cur)) do
+			new_cost = accum[util.phash(cur)] + 1 + indv:eval()
+			print("\t" .. util.phash(neigh) .. " " .. new_cost)
+			if not accum[util.phash(neigh)] or new_cost < accum[util.phash(neigh)] then
 				accum[util.phash(neigh)] = new_cost
-				cost = new_cost + h(neigh)
+				cost = new_cost
 				fringe:insert(neigh, cost)
-				ancestor[neigh] = cur
+				ancestor[util.phash(neigh)] = cur
 			end
 		end
 	end
@@ -55,8 +60,8 @@ function util.aStar(level, h, start, goal_check)
 	path = {}
 	table.insert(path, cur)
 	while util.phash(cur) ~= util.phash(start) do
-	   cur = ancestor[util.phash(cur)]
-	   table.insert(path, cur)
+		cur = ancestor[util.phash(cur)]
+		table.insert(path, cur)
 	end
 
 	res = {}
