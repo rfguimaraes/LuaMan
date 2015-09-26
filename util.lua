@@ -32,16 +32,15 @@ function util.aStar(indv, level)
 	accum[util.phash(start)] = 0
 
 	--print("START")
-	print(util.phash(start))
-	print(indv:huntHeuristic(start))
+	--print(util.phash(start))
+	--print(indv:huntHeuristic(start))
 
 	while not fringe:empty() do
 		--print("====")
 		cur = fringe:getNext()
 		--print(util.phash(cur))
-
-
 		if indv:goalCheck(cur) then
+			--print("GOAL")
 			--print(util.phash(cur))
 			break
 		end
@@ -59,20 +58,36 @@ function util.aStar(indv, level)
 	end
 
 	path = {}
-	table.insert(path, cur)
+	--print(">>>>>>>>>>>>>START<<<<<<<<<<<<<<<")
+	--table.insert(path, cur)
+	local dir = nil
 	while util.phash(cur) ~= util.phash(start) do
+		if ancestor[util.phash(cur)].x == cur.x then
+			if ancestor[util.phash(cur)].y < cur.y then
+				dir = "DOWN"
+			else
+				dir = "UP"
+			end
+		else
+			if ancestor[util.phash(cur)].x < cur.x then
+				dir = "RIGHT"
+			else
+				dir = "LEFT"
+			end
+		end
 		cur = ancestor[util.phash(cur)]
-		table.insert(path, cur)
+		table.insert(path, dir)
+		--print(dir)
 	end
+	--print(">>>>>>>>>>>>>END<<<<<<<<<<<<<<<")
+
 
 	res = {}
 	for index = #path,1,-1 do
         table.insert(res, path[index])
     end
 
-    io.input()
-
-    return res
+    return path
 end
 
 return util

@@ -92,7 +92,6 @@ function actor.Actor:turn()
 end
 
 function actor.Actor:move(dt)
-	local prevTile = self:getTileCoords()
 	if self:turn() then
 		if util.point_equal(self.marker, {x = self.x + self.ox, y = self.y + self.oy}, 3) then
 			self.dir = self.ndir
@@ -109,7 +108,6 @@ function actor.Actor:move(dt)
  	self.x, self.y = tx, ty
   	-- deal with the collisions
   	self:handleCollisions(cols, len)
-  	--if util.phash
 end
 
 -- Collisions
