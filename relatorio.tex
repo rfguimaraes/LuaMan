@@ -14,7 +14,7 @@
 \usepackage{amsfonts}
 \usepackage{multirow}
 
-\title{Relatório da Fase 1 do Projeto de MAC5784}
+\title{Relatório da Fase 2 do Projeto de MAC5784}
 \subtitle{LuaMan: um clone de Pac-Man}
 
 \author{Ricardo Ferreira Guimarães \\ 7577650}
@@ -27,7 +27,111 @@
 \section{Introdução}
 
 Neste projeto programa-se um jogo similar ao Pac-Man para estudo de aplicação de
-técnicas de inteligência artificial em jogos de computador.
+técnicas de inteligência artificial em jogos de computador. Nesta fase em particular,
+o objetivo consiste em tornar o Pac-Man autônomo, isto é, fazê-lo ser controlado  pelo
+programa e não mais pelo jogador.
+
+Para este fim, tem-se a intenção de aplicar algumas das técnicas vistas durante o curso
+sobre tomada de decisão (árvores de decisão, autômatos finitos, árvores de comportamente, entre
+outras).
+
+\section{Algoritmos e Técnicas Empregados}
+
+Dentre as técnicas vistas no curso, optou-se por utilizar autômatos finitos,
+por sua simplicidade e fácil adequação ao problema. Tentou-se utilizar árvores de
+comportamento, mas estas exigiam uma complexidade maior na implementação e modelagem mais
+sofisticada, que talvez, não fosse adicionar qualidade compensatório no objetivo final.
+Também, explorou-se a utilização de árvores de decisão, porém estas iam aos poucos se tornando
+muito extensas e de difícil integração com o código existente.
+
+O objetivo final do brinquedo desenvolvido é que o Pac-Man coma todas pílulas, sem ser pego pelos fantasmas, e em segundo plano, que como alguns fantasmas quando for seguro ou conveniente. Para este fim, foram pensados três estados de comportamento, que trabalham em conjunto para atingir o objetivo final:
+
+\begin{itemize}
+	\item \textit{eat:} Neste estado, o Pac-Man tem por objetivo principal comer os itens do mapa.
+	\item \textit{run:} Estado em que o Pac-Man foge dos fantasmas ``ativos''.
+	\item \textit{hunt:} Quando o Pac-Man come um pílula de poder e passa a caçar os fantasmas.
+\end{itemize}
+
+Em todos os estados utiliza-se o algoritmo A* para formular um rota (ou plano) para o Pac-Man,
+o que muda entre eles são: a função heurística, a função de avaliação de um nó e a verificação
+de objetivo. Quando o Pac-Man atinge um objetivo ou muda de estado gera-se um novo plano, de acordo como estado do autômato.
+
+\subsection{Algoritmo A*}
+
+Para guiar o Pac-Man até seus variados objetivos, escolheu-se implementar um A* relativamente simples. Neste algoritmo, faz-se uma busca expandindo os nós de menor custo da origem, até algum
+objetivo (podem ser um ou mais nós). Ele faz isso avaliando o custo determinístico (gasto até o momento) e o custo esperado até o objetivo (custo heurístico).
+
+Além de ser comumente utilizado em jogos e ser relativamente simples de implementar 
+(mesmo tendo que desenvolver as próprias filas de prioridades), optou-se por este algoritmo por
+poder incluir valores a mais nos cálculos dos custos, como será explicitado posteriormente, para
+cada estado do autômato que controlará o comportamento do Pac-Man.
+
+\subsection{Estado \textit{Eat}}
+
+Neste estado o objetivo é bem simples: chegar à pílula (simples ou de poder), mais próxima.
+Assim, considera-se um nó (ladrilho do jogo), um destino, se ele contém alguma pílula.
+
+Entretanto, ao utilizar o A*, não encontrou-se uma heurística adequada (lembrando
+que a função básica de avaliação do custo é f(n) = g(n) + h(n), onde h(n) é um heurística,
+preferencialmente admissível). Isto pois, em um dado estado, teria de se saber como está a
+distribuição de pílulas no mapa, o que poderia ser muito custoso para ser calculado em
+um ciclo do jogo. Por estas razões a heurística básica é h(n) = 0.
+
+Para fazer com que o Pac-Man evitasse os fantasmas foi adicionado um ``fator de risco'',
+calculado pela fórmula $dangerFactor(n) =  \frac{\alpha_{eat}}{\text{distância mínima até um fantasma ativo}}$. Atualmente, $\alpha_{eat} = 100$ (quanto maior, mais distância o Pac-Man
+tentará manter dos fantasmas).
+
+E com objetivo de diferenciar os nós pelo conteúdo, adiciona-se mais custo: ``custo de conteúdo'',
+ele vale 0, se a célula contém uma pílula comum, 5 para pílula de energia e 2 para piso vazio; isto
+faz com que o A*, ao tentar minimizar custos, produza caminhos com mais pílulas, mas com certa economia da pílula de energia.
+
+Assim, para o A* define-se a função heurística neste estado por:
+$h_{eat}(n) = h(n) + dangerFactor(n) + contentCost(n)$
+
+Se um fantasma ativo chega a menos de uma distância de 8 unidades (norma L1), muda-se
+para o estado \textit{run}. Ao pegar a pílula de poder, muda-se para o estado \textit{hunt}.
+
+\subsection{Estado \textit{Run}}
+
+Neste estado quer-se apenas fugir de todos os fantasmas. Em contraste com o estado anterior,
+ainda querendo aproveitar o A*, há várias funções heurísticas possíveis para se avaliar um nó:
+distância mínima até um fantasma, distância média até os fantasmas, fator de ramificação, entre outras. Entretanto, não encontrou-se uma função simples que caracterizasse um nó objetivo, as estratégias relativamente sofisticadas envolviam calcular o valor de distâncias para 
+cada um dos nós, e aqueles com valor máximo seriam objetivo, mas isto poderia se mostrar custoso
+computacionalmente. 
+
+Assim, usando a geometria do mapa, foram fixados 5 pontos, chamados ``pontos de fuga'', são eles:
+os quatro cantos e o centro do mapa. Nos testes, estes se mostraram suficiente para que o Pac-Man
+possa escolher para onde fugir, escolhendo, a cada iteração, o melhor entre eles (neste caso, aquele
+que minimize a distância média até os fantasmas).
+
+Para melhorar a capacidade de fuga, a cada movimento do Pac-Man neste estado o plano inteiro é recalculado. Mesmo assim, a eficiência do jogo não foi demasiadamente comprometida (não houveram
+diferenças perceptíveis na taxa de quadros).
+
+Assim como no estado \textit{eat}, este também conta com um ``fator de risco'':
+
+$dangerFactor(n) =  \frac{\alpha_{run}}{\text{distância mínima até um fantasma ativo}}$
+
+(atualmente $\alpha_{run} = 1500$); e um ``custo de conteúdo'': valendo 2 para pílula comum ou piso vazio, e 0 para pílula de poder (isto para simular uma ``intenção de contra-ataque'', caso uma boa oportunidade surja).
+
+Assim, para o A* define-se a função heurística neste estado por:
+
+$h_{run}(n) = \min{L1(n, goals)} + dangerFactor(n) + contentCost(n)$
+
+Deste estado, vai-se para \textit{eat}, se os fantasmas ficarem a mais de 10 unidades de distância (norma L1) e vai para \textit{hunt} ao pegar uma pílula de poder.
+
+\subsection{Estado \textit{Hunt}}
+
+Neste estado, sabidamente, o Pac-Man está invulnerável e seu objetivo é caçar fantasmas, até que sua
+energia esteja em um nível baixo (20\%, atualmente). Felizmente, tanto a função de verificação
+de objetivo, quanto a função heurística foram facilmente determinadas:
+uma célula é objetivo se contém um fantasma ativo, e a heurística é a distância (norma L1) até o fantasma mais próximo.
+
+Neste caso, não faz sentido tem um ``fator de perigo'', mas ainda assim, utiliza-se o ``custo de conteúdo'' para priorizar caminhos com pílulas e evitar pegar outra pílula de energia, enquanto a
+o nível de poder ainda está alto. Portanto, os custos escolhidos foram: 1 para piso ou pílula comum e 7 para pílula de energia.
+
+Assim, para o A* define-se a função heurística neste estado por:
+
+$h_{run}(n) = \min{L1(n, \text{fantasmas ativos}} + contentCost(n)$
 
 \section{Tecnologias}
 
@@ -38,7 +142,8 @@ a qual auxilia o desenvolvimento de jogos utilizando a linguagem Lua.
 
 \subsection{Personagem principal}
 
-Nesta fase, LuaMan, o personagem principal é controlado pelo jogador utilizando as setas do teclado.
+%Nesta fase, LuaMan, o personagem principal é controlado pelo jogador utilizando as setas do teclado.
+Nesta fase o personagem principal é controlado por um autômato finito determinístico.
 O código responsável está no arquivo \texttt{player.lua}.
 
 \subsection{Inimigos}
@@ -54,13 +159,25 @@ A lógica dos fantasmas está implementada no arquivo \texttt{enemy.lua}, em par
 
 \section{Execução}
 
-Na pasta \texttt{releases}, se encontram arquivos compactados para cada sistema operacional disponível.
 Para executar o jogo, basta extrair o pacote referente ao sistema operacional desejado e executar o
 arquivo correspondente (luaman.exe no Windows, run.sh no Linux e luaman.app no MacOS).
 
 \section{Observações}
 
 O código do jogo está disponível em: \url{https://github.com/rfguimaraes/LuaMan}.
-Pacotes para cada sistema operacional estão disponíveis em: \url{https://github.com/rfguimaraes/LuaMan/releases/tag/Fase1}.
+Pacotes para cada sistema operacional estão disponíveis em: \url{https://github.com/rfguimaraes/LuaMan/releases/tag/Fase2}.
+
+\section{Considerações Finais}
+
+Por meio desta etapa foi possível entender melhor a aplicabilidade das diferentes técnicas de
+tomada de decisão. Graças ao modelo flexível adotado, pode-se ajustar facilmente o comportamento
+do Pac-Man, trocando alguns valores (parâmetros das heurísticas, por exemplo).
+Além disso, foi possível lidar com problemas de integração entre o código existente de movimentação
+e o controlador recém-desenvolvido (etapa que demandou bastante tempo).
+
+Entre as melhorias que poderiam ser feitas estão: dar prioridade à direção na qual já está se movendo
+(evitando mudanças de direção desnecessárias), mudar a heurística do estado \textit{hunt} para que o Pac-Man seja mais ou menos agressivo, de forma proporcional à energia que ainda lhe resta e pensar
+em formas mais eficientes de decidir a movimentação do Pac-Man, fazendo pré-processamento do mapa
+ou limitando a análise apenas dos objetos até uma certa distância dele.
 
 \end{document}
