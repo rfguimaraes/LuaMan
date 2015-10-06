@@ -2,6 +2,8 @@ pq = require "pq"
 
 local util = {}
 
+util.verbose = false
+
 util.dirs = {["RIGHT"] = {x = 1, y = 0},
 	  ["DOWN"] = {x = 0, y = 1}, 
 	  ["LEFT"] = {x = -1, y = 0}, 
@@ -21,7 +23,14 @@ function util.l1Norm(p1, p2)
 	return math.abs(p1.x - p2.x) + math.abs(p1.y - p2.y)
 end
 
+function dbg_print(text)
+    if util.verbose then
+        print(text)
+    end
+end
+
 function util.aStar(indv, level)
+	dbg_print(" -----------------A*")
 	start = indv.level:curTile(indv.x, indv.y)
 	fringe = pq.PQ()
 	fringe:insert(start, 0)
@@ -31,8 +40,8 @@ function util.aStar(indv, level)
 	ancestor[util.phash(start)] = nil
 	accum[util.phash(start)] = 0
 
-	--print("START")
-	--print(util.phash(start))
+	dbg_print("START")
+	dbg_print(util.phash(start))
 	--print(indv:huntHeuristic(start))
 
 	while not fringe:empty() do
@@ -40,8 +49,8 @@ function util.aStar(indv, level)
 		cur = fringe:getNext()
 		--print(util.phash(cur))
 		if indv:goalCheck(cur) then
-			--print("GOAL")
-			--print(util.phash(cur))
+			dbg_print("GOAL")
+			dbg_print(util.phash(cur))
 			break
 		end
 		--print("neigh:")
@@ -58,8 +67,7 @@ function util.aStar(indv, level)
 	end
 
 	path = {}
-	--print(">>>>>>>>>>>>>START<<<<<<<<<<<<<<<")
-	--table.insert(path, cur)
+	dbg_print(">>>>>>>>>>>>>START<<<<<<<<<<<<<<<")
 	local dir = nil
 	while util.phash(cur) ~= util.phash(start) do
 		if ancestor[util.phash(cur)].x == cur.x then
@@ -77,16 +85,11 @@ function util.aStar(indv, level)
 		end
 		cur = ancestor[util.phash(cur)]
 		table.insert(path, dir)
-		--print(dir)
+		dbg_print(dir)
 	end
-	--print(">>>>>>>>>>>>>END<<<<<<<<<<<<<<<")
+	dbg_print(">>>>>>>>>>>>>END<<<<<<<<<<<<<<<")
 
-
-	res = {}
-	for index = #path,1,-1 do
-        table.insert(res, path[index])
-    end
-
+	dbg_print(" -----------------A*")
     return path
 end
 

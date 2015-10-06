@@ -6,11 +6,13 @@ db = require "db"
 univ = require "universe"
 enemy = require "enemy"
 gamestate = require "gamestate"
+util = require "util"
 
 debug = nil
 quit = false
 curState = gamestate.state["start"]
 nextState = curState
+util.verbose = true
 
 -- Game starts
 function love.load(arg)
@@ -21,6 +23,9 @@ function love.update(dt)
 	if love.keyboard.isDown('escape') or quit then
 		love.event.push('quit')
 	end
+	if love.keyboard.isDown('o') then
+        util.verbose = not util.verbose
+    end
 	nextState = curState:update(dt)
 end
 

@@ -30,24 +30,26 @@ player.costTable =
 {
 	eat = {["."] = 0, ["u"] = 5, ["?"] = 2, ["ghost"] = 100},
 	run = {["."] = 2, ["u"] = 0, ["?"] = 2, ["ghost"] = 1500},
-	hunt = {["."] = 1, ["u"] = 7, ["?"] = 1, ["ghost"] = 0}
+	hunt = {["."] = 1, ["u"] = 7, ["?"] = 1, ["ghost"] = 100}
 }
 
 function player.Player:toEat()
 	self.state = "eat"
+	dbg_print("EAT")
 	self.dirStack = util.aStar(self, self.level)
 	self.init = true
 end
 
 function player.Player:toRun()
 	self.state = "run"
+	dbg_print("RUN")
 	self.dirStack = util.aStar(self, self.level)
 	self.init = true
-
 end
 
 function player.Player:toHunt()
 	self.state = "hunt"
+	dbg_print("HUNT")
 	self.dirStack = util.aStar(self, self.level)
 	self.init = true
 end
@@ -110,11 +112,15 @@ function player.Player:update(dt)
 	end
 	if self.init or util.phash(prevTile) ~= util.phash(self:getTileCoords()) or not self:checkDir(self.ndir) then
 		self.init = false
-		--print(self.dirStack[#self.dirStack])
-		--print(#self.dirStack)
+        dbg_print("================= Player")
+		dbg_print(self.dirStack[#self.dirStack])
+		dbg_print(#self.dirStack)
+        dbg_print(util.phash(self:getTileCoords()))
+        dbg_print("================= Player")
   		if #self.dirStack == 0 then
+            dbg_print("Empty Plan")
   			self.dirStack = util.aStar(self, self.level)
-  			self.init = true
+  			-- self.init = true
   		end
   		self.ndir = table.remove(self.dirStack)
   	else
@@ -304,7 +310,7 @@ function player.Player:huntHeuristic(point)
 		end
 	end
 	if #goals == 0 then
-		return 0
+		return self:eatHeuristic(point)
 	end
 	local min = util.l1Norm(point, goals[1])
 	for _, goal in ipairs(goals) do
@@ -322,7 +328,7 @@ function player.Player:huntGoalCheck(point)
 		end
 	end
 	if #goals == 0 then
-		return true
+		return self:eatGoalCheck(point)
 	end
 	for _,goal in ipairs(goals) do
 		if util.phash(point) == util.phash({x = goal.x, y = goal.y}) then
@@ -366,9 +372,9 @@ function player.Player:eval(point)
 	end
 	local contentCost = player.costTable[self.state][tile]
 	local dangerFactor = player.costTable[self.state]["ghost"] * (1/(self:minDistGhosts(point) + 1))
-	if self.state == "hunt" then
-		dangerFactor = 0
-	end
+	-- if self.state == "hunt" then
+	-- 	dangerFactor = 0
+    -- end
 
 	return self:heuristic(point) + contentCost + dangerFactor
 end
