@@ -112,17 +112,18 @@ function player.Player:update(dt)
 	end
 	if self.init or util.phash(prevTile) ~= util.phash(self:getTileCoords()) or not self:checkDir(self.ndir) then
 		self.init = false
-        dbg_print("================= Player")
-		dbg_print(self.dirStack[#self.dirStack])
-		dbg_print(#self.dirStack)
-        dbg_print(util.phash(self:getTileCoords()))
-        dbg_print("================= Player")
+        -- dbg_print("================= Player")
+		-- dbg_print(self.dirStack[#self.dirStack])
+		-- dbg_print(#self.dirStack)
+        -- dbg_print(util.phash(self:getTileCoords()))
+        -- dbg_print("================= Player")
   		if #self.dirStack == 0 then
-            dbg_print("Empty Plan")
+            -- dbg_print("Empty Plan")
   			self.dirStack = util.aStar(self, self.level)
   			-- self.init = true
   		end
   		self.ndir = table.remove(self.dirStack)
+        dbg_print("selected: " .. (self.ndir or "nil"))
   	else
   		--print("BO")
   	end

@@ -69,7 +69,6 @@ function actor.Actor:neighbors(point)
 	local neighbors = {}
     local bestn = self.level:getNeighbors(point.x, point.y)[self.dir]
     if bestn then
-        print(bestn.x)
         c = self.level.tileTable[bestn.x][bestn.y]
         if not c:match(actor.Actor.blocks) then
             table.insert(neighbors, {x = bestn.x, y = bestn.y})
