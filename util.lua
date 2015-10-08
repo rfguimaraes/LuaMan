@@ -90,7 +90,11 @@ function util.aStar(indv, level)
 	dbg_print(">>>>>>>>>>>>>END<<<<<<<<<<<<<<<")
 
 	dbg_print(" -----------------A*")
-    return path
+    res = {}
+    for v = math.max(1, #path - 5),#path,1 do
+        table.insert(res, path[v])
+    end
+    return res
 end
 
 return util
