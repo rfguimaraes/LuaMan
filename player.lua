@@ -105,25 +105,27 @@ function player.Player:update(dt)
 		end
 		return
 	end
+
 	self.energy = self.energy - player.ENERGY_LOSS * dt
 	if self.energy <= 0 then
 		self.energy = 0
 		self.status = "normal"
 	end
-	if self.init or util.phash(prevTile) ~= util.phash(self:getTileCoords()) or not self:checkDir(self.ndir) then
+
+	if self.init or util.phash(prevTile) ~= util.phash(self:getTileCoords()) then
 		self.init = false
         -- dbg_print("================= Player")
 		-- dbg_print(self.dirStack[#self.dirStack])
-		-- dbg_print(#self.dirStack)
-        -- dbg_print(util.phash(self:getTileCoords()))
         -- dbg_print("================= Player")
   		if #self.dirStack == 0 then
             -- dbg_print("Empty Plan")
   			self.dirStack = util.aStar(self, self.level)
-  			-- self.init = true
+  			self.init = true
   		end
   		self.ndir = table.remove(self.dirStack)
+		dbg_print(#self.dirStack)
         dbg_print("selected: " .. (self.ndir or "nil"))
+        dbg_print(util.phash(self:getTileCoords()))
   	else
   		--print("BO")
   	end
@@ -160,7 +162,7 @@ end
 function player.Player:actRun()
 	if self:minDistGhosts(self:getTileCoords()) > 10 then
 		self:toEat()
-	elseif self.energy > 0.2 * player.MAX_ENERGY then
+	elseif self.energy > 0.2 * player.MAX_ENERGY and self:minDistGhosts(self:getTileCoords()) <= 10 then
 		self:toHunt()
 	else
 		self:toRun()
@@ -169,11 +171,13 @@ end
 
 function player.Player:actHunt()
 	if self.energy < 0.1 * player.MAX_ENERGY then
-		if self:minDistGhosts(self:getTileCoords()	) > 7 then
+		if self:minDistGhosts(self:getTileCoords()) > 7 then
 			self:toEat()
 		else
 			self:toRun()
 		end
+    elseif self:minDistGhosts(self:getTileCoords()) > 10 then
+        self:toEat()
 	end
 end
 
