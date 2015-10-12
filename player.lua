@@ -36,21 +36,21 @@ player.costTable =
 function player.Player:toEat()
 	self.state = "eat"
 	dbg_print("EAT")
-	self.dirStack = util.aStar(self, self.level)
+	self.dirStack = util.aStar(self)
 	self.init = true
 end
 
 function player.Player:toRun()
 	self.state = "run"
 	dbg_print("RUN")
-	self.dirStack = util.aStar(self, self.level)
+	self.dirStack = util.aStar(self)
 	self.init = true
 end
 
 function player.Player:toHunt()
 	self.state = "hunt"
 	dbg_print("HUNT")
-	self.dirStack = util.aStar(self, self.level)
+	self.dirStack = util.aStar(self)
 	self.init = true
 end
 
@@ -67,8 +67,6 @@ function player.Player:_init(universe, level, tileW, tileH, x, y, speed, img)
 	self.state = "eat"
 	self.dirStack = {}
 	self:toEat()
-	self.init = true
-    self.prevTile = nil
 end
 
 function player.Player:initRunPoints()
@@ -95,8 +93,6 @@ function player.Player:initAnims()
 end
 
 function player.Player:update(dt)
-    dbg_print("====================")
-
 	if self.status == "die" then
 		self.countdown = self.countdown + dt
 		if self.countdown >= 0.08 * 5 then
@@ -117,8 +113,7 @@ function player.Player:update(dt)
         self.nextStep = table.remove(self.dirStack)
     end
     if #self.dirStack == 0 then
-        dbg_print("Empty Plan")
-        self.dirStack = util.aStar(self, self.level)
+        self.dirStack = util.aStar(self)
     end
     self:move(dt)
     self.animations[self.status]:update(dt)
@@ -368,9 +363,6 @@ function player.Player:eval(point)
 	end
 	local contentCost = player.costTable[self.state][tile]
 	local dangerFactor = player.costTable[self.state]["ghost"] * (1/(self:minDistGhosts(point) + 1))
-	-- if self.state == "hunt" then
-	-- 	dangerFactor = 0
-    -- end
 
 	return self:heuristic(point) + contentCost + dangerFactor
 end

@@ -30,7 +30,7 @@ function dbg_print(text)
     end
 end
 
-function util.aStar(indv, level)
+function util.aStar(indv)
 	dbg_print(" A*-----------------")
 	start = indv:getTileCoords()
     level = indv.level

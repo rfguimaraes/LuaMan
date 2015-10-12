@@ -21,7 +21,6 @@ function actor.Actor:_init(world, level, ctype, tileW, tileH, x, y, speed, img)
 	self.status = "normal" 
 	self.alive = true
 
-	self.marker = {x = nil, y = nil}
     self.nextStep = nil
 	
 	self.speed = speed
@@ -87,32 +86,18 @@ function actor.Actor:neighbors(point)
 	return neighbors
 end
 
-function actor.Actor:turn()
-	if self.dir == self.ndir then
-		return false
-	elseif not self:checkDir(self.ndir) then
-	    return false
-	end
-
-	local cur = self.level:curTile(self.x + self.ox, self.y + self.oy)
-
-	self.marker.x = ((cur.x - 1) * self.level.tileW) + self.ox
-	self.marker.y = ((cur.y - 1) * self.level.tileH) + self.oy
-	return true
-end
-
 function actor.Actor:move(dt)
     local dx, dy = 0, 0
     if not self.nextStep then
         return
     end
     self.dir = self.nextStep.dir
-    print(self.nextStep.dir)
-    print("mark: " .. util.phash(self.nextStep.mark))
+    -- dbg_print(self.nextStep.dir)
+    -- dbg_print("mark: " .. util.phash(self.nextStep.mark))
     local now = {x = self.x + self.ox, y = self.y + self.oy}
-    print("now: " .. util.phash(now))
+    -- dbg_print("now: " .. util.phash(now))
     if util.point_equal(self.nextStep.mark, {x = self.x + self.ox, y = self.y + self.oy}, 3) then
-        print("Done")
+        -- dbg_print("Done")
         self.x = self.nextStep.mark.x - self.ox
         self.y = self.nextStep.mark.y - self.oy
         self.world:update(self, self.x, self.y)
@@ -122,7 +107,7 @@ function actor.Actor:move(dt)
         dy = util.dirs[self.dir].y * self.speed * dt
     end
 	local goalX, goalY = self.x + dx, self.y + dy
-    print("goal: " .. util.phash({x = goalX + self.ox, y = goalY + self.oy}))
+    -- dbg_print("goal: " .. util.phash({x = goalX + self.ox, y = goalY + self.oy}))
 
   	local tx, ty, cols, len = self.world:move(self, goalX, goalY, self.collide)
     print("final: " .. util.phash({x = tx + self.ox, y = ty + self.oy}))

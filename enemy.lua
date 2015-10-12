@@ -46,21 +46,9 @@ end
 
 function enemy.Enemy:act()
 	if love.timer.getTime() - self.lastUpdate >= 0.2 then
+        self.destiny = self.level:randTile()
+        self.dirStack = util.aStar(self)
 		self.lastUpdate = love.timer.getTime()
-		if math.random() < 0.25 then
-			self.ndir = self.dir
-			return
-		end
-		local r = math.random()
-		if r < 0.25 then
-			self.ndir = "UP"
-		elseif r < 0.5 then
-			self.ndir = "DOWN"
-		elseif r < 0.75 then
-			self.ndir = "RIGHT"
-		else
-			self.ndir = "LEFT"
-		end
 	end
 end
 
@@ -114,6 +102,14 @@ function enemy.Enemy:kill()
 	else
 		self.status = "eye"
 	end
+end
+
+function enemy.Enemy:goalCheck(point)
+    return util.phash(point) == util.phash(self.destiny)
+end
+
+function enemy.Enemy:eval(point)
+    return 0
 end
 
 return enemy
