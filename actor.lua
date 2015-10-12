@@ -22,6 +22,7 @@ function actor.Actor:_init(world, level, ctype, tileW, tileH, x, y, speed, img)
 	self.alive = true
 
 	self.marker = {x = nil, y = nil}
+    self.nextStep = nil
 	
 	self.speed = speed
 	self.tileset = img
@@ -102,14 +103,15 @@ function actor.Actor:turn()
 end
 
 function actor.Actor:move(dt)
-	if self:turn() then
-		if util.point_equal(self.marker, {x = self.x + self.ox, y = self.y + self.oy}, 3) then
-			self.dir = self.ndir
-			self.x = self.marker.x - self.ox
-			self.y = self.marker.y - self.oy
-			self.world:update(self, self.x, self.y)
-		end
-	end
+    if not self.nextStep then
+        return
+    end
+    self.dir = self.nextStep.dir
+    if util.point_equal(self.nextStep.mark, {x = self.x + self.ox, y = self.y + self.oy}, 3) then
+        self.x = self.mark.x - self.ox
+        self.y = self.mark.y - self.oy
+        self.world:update(self, self.x, self.y)
+    end
 	local dx = util.dirs[self.dir].x * self.speed * dt
 	local dy = util.dirs[self.dir].y * self.speed * dt
 	local goalX, goalY = self.x + dx, self.y + dy

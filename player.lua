@@ -68,6 +68,7 @@ function player.Player:_init(universe, level, tileW, tileH, x, y, speed, img)
 	self.dirStack = {}
 	self:toEat()
 	self.init = true
+    self.prevTile = nil
 end
 
 function player.Player:initRunPoints()
@@ -94,10 +95,8 @@ function player.Player:initAnims()
 end
 
 function player.Player:update(dt)
-	local prevTile = self:getTileCoords()
+    dbg_print("====================")
 
-	actor.Actor.update(self, dt)
-	
 	if self.status == "die" then
 		self.countdown = self.countdown + dt
 		if self.countdown >= 0.08 * 5 then
@@ -112,23 +111,38 @@ function player.Player:update(dt)
 		self.status = "normal"
 	end
 
-	if self.init or util.phash(prevTile) ~= util.phash(self:getTileCoords()) then
-		self.init = false
+    self:act()
+
+    dbg_print("From " .. util.phash(self.prevTile))
+    dbg_print("To " .. util.phash(self:getTileCoords()))
+    if self.init then
+        print("inited")
+    end
+    if not self.nextStep then
+        self.nextStep = table.remove(self.dirStack)
+    end
+    if #self.dirStack == 0 then
+        self.init = true
+        dbg_print("Empty Plan")
+        self.dirStack = util.aStar(self, self.level)
+    end
+	if self.init or util.phash(self.prevTile) ~= util.phash(self:getTileCoords()) then
+        self.init = false
         -- dbg_print("================= Player")
 		-- dbg_print(self.dirStack[#self.dirStack])
         -- dbg_print("================= Player")
-  		if #self.dirStack == 0 then
-            -- dbg_print("Empty Plan")
-  			self.dirStack = util.aStar(self, self.level)
-  			self.init = true
-  		end
   		self.ndir = table.remove(self.dirStack)
 		dbg_print(#self.dirStack)
         dbg_print("selected: " .. (self.ndir or "nil"))
-        dbg_print(util.phash(self:getTileCoords()))
+        dbg_print("Pre: " .. util.phash(self:getTileCoords()))
   	else
   		--print("BO")
   	end
+	self.prevTile = self:getTileCoords()
+    self:move(dt)
+    dbg_print("Pos: " .. util.phash(self:getTileCoords()))
+    self.animations[self.status]:update(dt)
+    dbg_print("====================")
 end
 
 function player.Player:act()
@@ -162,7 +176,7 @@ end
 function player.Player:actRun()
 	if self:minDistGhosts(self:getTileCoords()) > 10 then
 		self:toEat()
-	elseif self.energy > 0.2 * player.MAX_ENERGY and self:minDistGhosts(self:getTileCoords()) <= 10 then
+	elseif self.energy > 0.2 * player.MAX_ENERGY then
 		self:toHunt()
 	else
 		self:toRun()
@@ -176,8 +190,6 @@ function player.Player:actHunt()
 		else
 			self:toRun()
 		end
-    elseif self:minDistGhosts(self:getTileCoords()) > 10 then
-        self:toEat()
 	end
 end
 

@@ -80,6 +80,13 @@ function maze.Maze:setTile(x, y, data)
 	self.tileTable[tx][ty] = data
 end
 
+function maze.Maze:tileCenter(pos)
+    local marker = {}
+	marker.x = ((pos.x) * self.tileW) - (self.tileW/2)
+	marker.y = ((pos.y) * self.tileH) - (self.tileH/2)
+    return marker
+end
+
 function maze.Maze:draw()
 	love.graphics.draw(self.tileBatch)
 end

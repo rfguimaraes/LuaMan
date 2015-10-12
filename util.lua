@@ -1,4 +1,5 @@
 pq = require "pq"
+maze = require "maze"
 
 local util = {}
 
@@ -30,8 +31,9 @@ function dbg_print(text)
 end
 
 function util.aStar(indv, level)
-	dbg_print(" -----------------A*")
-	start = indv.level:curTile(indv.x, indv.y)
+	dbg_print(" A*-----------------")
+	start = indv:getTileCoords()
+    level = indv.level
 	fringe = pq.PQ()
 	fringe:insert(start, 0)
 	ancestor = {}
@@ -67,7 +69,7 @@ function util.aStar(indv, level)
 	end
 
 	path = {}
-	dbg_print(">>>>>>>>>>>>>START<<<<<<<<<<<<<<<")
+	-- dbg_print(">>>>>>>>>>>>>START<<<<<<<<<<<<<<<")
 	local dir = nil
 	while util.phash(cur) ~= util.phash(start) do
 		if ancestor[util.phash(cur)].x == cur.x then
@@ -84,15 +86,17 @@ function util.aStar(indv, level)
 			end
 		end
 		cur = ancestor[util.phash(cur)]
-		table.insert(path, dir)
-		dbg_print(dir)
+        data = {dir = dir, mark = indv.level:tileCenter(cur)}
+        dbg_print("D: " .. data.dir .. " until: " .. util.phash(cur) .. "/" .. util.phash(data.mark))
+		table.insert(path, data)
+		-- dbg_print(dir)
 	end
-	dbg_print(">>>>>>>>>>>>>END<<<<<<<<<<<<<<<")
+	-- dbg_print(">>>>>>>>>>>>>END<<<<<<<<<<<<<<<")
 
 	dbg_print(" -----------------A*")
     res = {}
     for v = math.max(1, #path - 5),#path,1 do
-        table.insert(res, path[v])
+        table.insert(res, path[v].dir)
     end
     return res
 end
