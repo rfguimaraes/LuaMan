@@ -102,7 +102,7 @@ function util.aStar(indv)
     for v = math.max(1, #path - 5),#path,1 do
         table.insert(res, path[v])
     end
-    return res
+    return path
 end
 
 return util

@@ -13,6 +13,9 @@ function enemy.Enemy:_init(world, level, tileW, tileH, x, y, speed, img, index)
 	self.index = index
 	self:initAnims()
 	self.lastUpdate = love.timer.getTime()
+    self.destiny = self.level:randTile()
+    self.dirStack = util.aStar(self)
+    print(self.dirStack)
 end
 
 function enemy.Enemy:initAnims()
@@ -40,13 +43,30 @@ function enemy.Enemy:update(gotPill, cur, dt)
 	elseif self.status == "fear" and noFear then
 		self.status = "normal"
 	end
-	
+    if not self.nextStep then
+        self.nextStep = table.remove(self.dirStack)
+    end
 	actor.Actor.update(self, dt)	
 end
 
+function enemy.Enemy:neighbors(point)
+	local neighbors = {}
+	for key, val in pairs(self.level:getNeighbors(point.x, point.y)) do
+            c = self.level.tileTable[val.x][val.y]
+            if not c:match(enemy.Enemy.blocks) then
+                table.insert(neighbors, {x = val.x, y = val.y})
+            end
+	end
+    return neighbors
+end
+
 function enemy.Enemy:act()
-	if love.timer.getTime() - self.lastUpdate >= 0.2 then
-        self.destiny = self.level:randTile()
+    local tile
+	if #self.dirStack == 0 then
+        repeat
+            self.destiny = self.level:randTile()
+            tile = self.level.tileTable[self.destiny.x][self.destiny.y]
+        until not tile:match(actor.Actor.blocks)
         self.dirStack = util.aStar(self)
 		self.lastUpdate = love.timer.getTime()
 	end
