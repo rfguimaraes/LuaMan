@@ -85,18 +85,22 @@ function util.aStar(indv, level)
 				dir = "LEFT"
 			end
 		end
-		cur = ancestor[util.phash(cur)]
         data = {dir = dir, mark = indv.level:tileCenter(cur)}
-        dbg_print("D: " .. data.dir .. " until: " .. util.phash(cur) .. "/" .. util.phash(data.mark))
+        local ances = "nil"
+        if ancestor[util.phash(cur)] then
+            ances = util.phash(ancestor[util.phash(cur)])
+        end
+        dbg_print(ances .. " D: " .. data.dir .. " until: " .. util.phash(cur) .. "/" .. util.phash(data.mark))
 		table.insert(path, data)
 		-- dbg_print(dir)
+		cur = ancestor[util.phash(cur)]
 	end
 	-- dbg_print(">>>>>>>>>>>>>END<<<<<<<<<<<<<<<")
 
 	dbg_print(" -----------------A*")
     res = {}
     for v = math.max(1, #path - 5),#path,1 do
-        table.insert(res, path[v].dir)
+        table.insert(res, path[v])
     end
     return res
 end
