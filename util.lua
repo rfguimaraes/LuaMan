@@ -31,8 +31,14 @@ function dbg_print(text)
 end
 
 function util.aStar(indv)
+    if indv.name ~= "luaman" then
+        util.verbose = false
+    end
 	dbg_print(" A*-----------------")
 	start = indv:getTileCoords()
+    if indv.nextStep then
+        indv.level:getTile(indv.nextStep.mark.x, indv.nextStep.mark.y)
+    end
     level = indv.level
 	fringe = pq.PQ()
 	fringe:insert(start, 0)
@@ -102,6 +108,7 @@ function util.aStar(indv)
     for v = math.max(1, #path - 5),#path,1 do
         table.insert(res, path[v])
     end
+    util.verbose = true
     return path
 end
 

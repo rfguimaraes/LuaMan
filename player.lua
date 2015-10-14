@@ -54,8 +54,8 @@ function player.Player:toHunt()
 	self.init = true
 end
 
-function player.Player:_init(universe, level, tileW, tileH, x, y, speed, img)
-	actor.Actor._init(self, universe.world, level, "player", tileW, tileH, x, y, speed, img)
+function player.Player:_init(name, universe, level, tileW, tileH, x, y, speed, img)
+	actor.Actor._init(self, name, universe.world, level, "player", tileW, tileH, x, y, speed, img)
 	self.universe = universe
 	self:initAnims()
 	self.energy = 0
@@ -153,7 +153,7 @@ function player.Player:actRun()
 	elseif self.energy > 0.2 * player.MAX_ENERGY then
 		self:toHunt()
 	else
-		self:toRun()
+		-- self:toRun()
 	end
 end
 
@@ -284,11 +284,13 @@ function player.Player:bestRunPoint()
 end
 
 function player.Player:runHeuristic(point)
-	return util.l1Norm(self:bestRunPoint(), point)
+    return self:eatHeuristic(point)
+	-- return util.l1Norm(self:bestRunPoint(), point)
 end
 
 function player.Player:runGoalCheck(point)
-	return util.phash(self:bestRunPoint()) == util.phash(point)
+    return self:eatGoalCheck(point)
+	-- return util.phash(self:bestRunPoint()) == util.phash(point)
 end
 
 ---------

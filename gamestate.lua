@@ -71,7 +71,9 @@ end
 
 function gamestate.PlayingState:draw(dt)
 	if gamestate.scene then
+        local ref = gamestate.scene.player:getTileCoords()
 		gamestate.scene:drawAndClean(dt)
+        love.graphics.print("POS: ".. util.phash(ref), 300, 10)
 	end
 end
 
@@ -90,6 +92,8 @@ end
 function gamestate.PausedState:draw(dt)
 	gamestate.drawn = true
 	gamestate.scene:drawAndClean(dt)
+    local ref = gamestate.scene.player:getTileCoords()
+    love.graphics.print("POS: ".. util.phash(ref), 300, 10)
 	love.graphics.setColor(255, 0, 0, 255)
 	love.graphics.setFont(db.fonts.header)
 	love.graphics.print("GAME PAUSED", 50, 100)

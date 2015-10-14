@@ -9,7 +9,8 @@ actor.Actor.blocks = "[w#]"
 
 -- Initialization
 
-function actor.Actor:_init(world, level, ctype, tileW, tileH, x, y, speed, img)
+function actor.Actor:_init(name, world, level, ctype, tileW, tileH, x, y, speed, img)
+    self.name = name
 	self.ctype = ctype
 
 	self.tileW, self.tileH = tileW, tileH
@@ -87,16 +88,23 @@ function actor.Actor:neighbors(point)
 end
 
 function actor.Actor:move(dt)
+    if self.name ~= "luaman" then
+        util.verbose = false
+    end
     local dx, dy = 0, 0
     if not self.nextStep then
         return
     end
     self.dir = self.nextStep.dir
+    if not self:checkDir(self.dir) then
+        dbg_print("FAIL")
+    end
+    dbg_print(self.name .. "==========")
     dbg_print(self.nextStep.dir)
     dbg_print("mark: " .. util.phash(self.nextStep.mark))
     local now = {x = self.x + self.ox, y = self.y + self.oy}
     dbg_print("now: " .. util.phash(now))
-    if util.point_equal(self.nextStep.mark, {x = self.x + self.ox, y = self.y + self.oy}, 3) then
+    if util.point_equal(self.nextStep.mark, {x = self.x + self.ox, y = self.y + self.oy}, 2) then
         dbg_print("Done")
         self.x = self.nextStep.mark.x - self.ox
         self.y = self.nextStep.mark.y - self.oy
@@ -114,6 +122,8 @@ function actor.Actor:move(dt)
  	self.x, self.y = tx, ty
   	-- deal with the collisions
   	self:handleCollisions(cols, len)
+    dbg_print("==========" .. self.name)
+    util.verbose = true
 end
 
 -- Collisions

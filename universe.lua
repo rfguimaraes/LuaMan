@@ -49,7 +49,13 @@ function universe.Universe:parseEnemy(tile, tx, ty)
 	local enemyIndex = {b = 1, c = 2, i = 3, p = 4}
 	local x = (tx - 1) * self.level.tileW
 	local y = (ty - 1) * self.level.tileH
-	local e = enemy.Enemy(self.world, self.level, self.level.tileW, self.level.tileH , x ,y, 90, db.img.enemy, enemyIndex[tile])
+    local names = {
+        b = "blinky",
+        i = "inky",
+        p = "pinky",
+        c = "clyde"
+    }
+	local e = enemy.Enemy(names[tile], self.world, self.level, self.level.tileW, self.level.tileH , x ,y, 90, db.img.enemy, enemyIndex[tile])
 	if tile ~= "b" then
 		self:parseSpawn(tx, ty)
 	end
@@ -66,7 +72,7 @@ end
 function universe.Universe:parsePlayer(tx, ty)
 	local x = (tx - 1) * self.level.tileW
 	local y = (ty - 1) * self.level.tileH
-	self.player = player.Player(self, self.level,self.level.tileW, self.level.tileH, x, y, 60, db.img.player)
+	self.player = player.Player("luaman", self, self.level,self.level.tileW, self.level.tileH, x, y, 60, db.img.player)
 end
 
 function universe.Universe:parseCoin(tx, ty)

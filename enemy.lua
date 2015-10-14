@@ -8,14 +8,14 @@ enemy.Enemy = classer.ncls(actor.Actor)
 
 enemy.Enemy.blocks = "[#]"
 
-function enemy.Enemy:_init(world, level, tileW, tileH, x, y, speed, img, index)
-	actor.Actor._init(self, world, level, "enemy", tileW, tileH, x, y, speed, img)
+function enemy.Enemy:_init(name, world, level, tileW, tileH, x, y, speed, img, index)
+    self.name = name
+	actor.Actor._init(self, name, world, level, "enemy", tileW, tileH, x, y, speed, img)
 	self.index = index
 	self:initAnims()
 	self.lastUpdate = love.timer.getTime()
     self.destiny = self.level:randTile()
     self.dirStack = util.aStar(self)
-    print(self.dirStack)
 end
 
 function enemy.Enemy:initAnims()
