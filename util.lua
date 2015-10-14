@@ -37,7 +37,7 @@ function util.aStar(indv)
 	dbg_print(" A*-----------------")
 	start = indv:getTileCoords()
     if indv.nextStep then
-        indv.level:getTile(indv.nextStep.mark.x, indv.nextStep.mark.y)
+        start = indv.level:curTile(indv.nextStep.mark.x, indv.nextStep.mark.y)
     end
     level = indv.level
 	fringe = pq.PQ()
