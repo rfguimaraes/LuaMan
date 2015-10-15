@@ -109,7 +109,7 @@ function util.aStar(indv)
         table.insert(res, path[v])
     end
     util.verbose = true
-    return path
+    return res
 end
 
 return util

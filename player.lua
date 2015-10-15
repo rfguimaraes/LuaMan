@@ -29,7 +29,7 @@ player.fsm_table =
 player.costTable =
 {
 	eat = {["."] = 0, ["u"] = 5, ["?"] = 2, ["ghost"] = 100},
-	run = {["."] = 2, ["u"] = 0, ["?"] = 2, ["ghost"] = 1500},
+	run = {["."] = 2, ["u"] = 0, ["?"] = 2, ["ghost"] = 15000},
 	hunt = {["."] = 1, ["u"] = 7, ["?"] = 1, ["ghost"] = 100}
 }
 
@@ -97,12 +97,14 @@ function player.Player:update(dt)
 		self.countdown = self.countdown + dt
 		if self.countdown >= 0.08 * 5 then
 			self.alive = false
+            return
 		end
-		return
 	end
 
-	self.energy = self.energy - player.ENERGY_LOSS * dt
-	if self.energy <= 0 then
+    if self.status == "power" then
+        self.energy = self.energy - player.ENERGY_LOSS * dt
+    end
+	if self.energy <= 0 and self.status == "power" then
 		self.energy = 0
 		self.status = "normal"
 	end
