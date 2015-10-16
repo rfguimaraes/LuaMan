@@ -247,12 +247,20 @@ end
 ---------
 
 function player.Player:avgDistGhosts(point)
-	dist = 0
-	for _,ghost in ipairs(self.universe.enemies) do
-		goal = self.level:curTile(ghost.x, ghost.y)
-		dist = dist + util.l1Norm(point, goal)
-	end
-	return dist/#self.universe.enemies
+    return self:distGhosts(point, nil)/#self.universe.enemies
+end
+
+function player.Player:distGhosts(point, limit)
+    local sum = 0
+    for _,ghost in ipairs(self.universe.enemies) do
+        goal = self.level:curTile(ghost.x, ghost.y)
+        local dist = util.l1Norm(point, goal)
+
+        if limit and dist < limit then
+            sum = sum + dist
+        end
+    end
+    return sum
 end
 
 function player.Player:minDistGhosts(point)
@@ -286,13 +294,13 @@ function player.Player:bestRunPoint()
 end
 
 function player.Player:runHeuristic(point)
-    return self:eatHeuristic(point)
-	-- return util.l1Norm(self:bestRunPoint(), point)
+    -- return self:eatHeuristic(point)
+	return util.l1Norm(self:bestRunPoint(), point)
 end
 
 function player.Player:runGoalCheck(point)
-    return self:eatGoalCheck(point)
-	-- return util.phash(self:bestRunPoint()) == util.phash(point)
+    local sum = 0
+    return self:distGhosts(point, 8) == 0
 end
 
 ---------

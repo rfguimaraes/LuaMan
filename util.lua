@@ -56,7 +56,7 @@ function util.aStar(indv)
 		--print("====")
 		cur = fringe:getNext()
 		--print(util.phash(cur))
-		if indv:goalCheck(cur) then
+		if indv:goalCheck(cur) and util.phash(cur) ~= util.phash(start) then
 			dbg_print("GOAL")
 			dbg_print(util.phash(cur))
 			break
