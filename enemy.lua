@@ -1,12 +1,28 @@
 classer = require "classer"
 anim8 = require "lib.anim8"
 actor = require "actor"
+fsm = require "fsm"
+util = require "util"
 
 local enemy = {}
 
 enemy.Enemy = classer.ncls(actor.Actor)
 
 enemy.Enemy.blocks = "[#]"
+
+enemy.fsm_table = 
+{
+    {"wander", "player_near", "seek", nil},
+    {"wander", "on_fear", "avoid", nil},
+    {"wander", "on_eye", "restore", nil},
+    {"seek", "player_far", "wander", nil},
+    {"seek", "on_fear", "avoid", nil},
+    {"seek", "on_eye", "restore", nil},
+    {"avoid", "player_near", "seek", nil},
+    {"avoid", "player_far", "wander", nil},
+    {"restore", "player_near", "seek", nil},
+    {"restore", "player_far", "wander", nil}
+}
 
 function enemy.Enemy:_init(name, world, level, tileW, tileH, x, y, speed, img, index)
     self.name = name
