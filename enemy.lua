@@ -24,10 +24,10 @@ enemy.fsm_table =
     {"restore", "player_far", "wander", nil}
 }
 
-function enemy.enemy:changeState(state)
+function enemy.Enemy:changeState(state)
     self.state = state
-    dbg_print(state)
-    self.dirStack = util.aStar(self)
+    dbg_print(self.name .. ": " .. state)
+    self.dirStack = util.aStar(self, 5)
 end
 
 function enemy.Enemy:_init(name, universe, level, tileW, tileH, x, y, speed, img, index)
@@ -39,7 +39,7 @@ function enemy.Enemy:_init(name, universe, level, tileW, tileH, x, y, speed, img
     self.fsm = fsm.FSM("wander", enemy.fsm_table)
     -- move this to actWander?
     self.destiny = self.level:randTile()
-    self.dirStack = util.aStar(self)
+    self.dirStack = util.aStar(self, nil)
     self:changeState("wander")
 end
 
@@ -68,6 +68,9 @@ function enemy.Enemy:update(gotPill, cur, dt)
 	elseif self.status == "fear" and noFear then
 		self.status = "normal"
 	end
+    if #self.dirStack == 0 then
+        self.dirStack = util.aStar(self, 5)
+    end
     if not self.nextStep then
         self.nextStep = table.remove(self.dirStack)
     end
@@ -86,15 +89,27 @@ function enemy.Enemy:neighbors(point)
 end
 
 function enemy.Enemy:act()
+    if self.state == "wander" then
+        self:actWander()
+    elseif self.state == "seek" then
+        self:actSeek()
+    elseif self.state == "avoid" then
+        self:actAvoid()
+    else
+        self:actRestore()
+    end
 end
 
 function enemy.Enemy:actWander()
+    if not self.destiny then
+        self.destiny = self.level:randTile()
+    end
     if self.status == "eye" then
         self:changeState("restore")
     elseif self.status == "fear" then
         self:changeState("avoid")
-    elseif util.l1Norm(self:getTileCoords(), universe.player:getTileCoords()) < 5 then
-        self:changeState(seek)
+    elseif util.l1Norm(self:getTileCoords(), self.universe.player:getTileCoords()) < 10 then
+        self:changeState("seek")
     end
 
     local tile
@@ -103,7 +118,7 @@ function enemy.Enemy:actWander()
             self.destiny = self.level:randTile()
             tile = self.level.tileTable[self.destiny.x][self.destiny.y]
         until not tile:match(actor.Actor.blocks)
-        self.dirStack = util.aStar(self)
+        self.dirStack = util.aStar(self, nil)
 		self.lastUpdate = love.timer.getTime()
 	end
 end
@@ -113,20 +128,43 @@ function enemy.Enemy:actSeek()
         self:changeState("restore")
     elseif self.status == "fear" then
         self:changeState("avoid")
-    elseif util.l1Norm(self:getTileCoords(), universe.player:getTileCoords()) > 10 then
+    elseif util.l1Norm(self:getTileCoords(), self.universe.player:getTileCoords()) > 10 then
         self:changeState("wander")
     end
 end
 
-function enemy.Enemy:actAvoid(self)
-    return self:actWander(self)
+function enemy.Enemy:actAvoid()
+    if self.status == "eye" then
+        self:changeState("restore")
+    elseif self.status == "normal" then
+        if util.l1Norm(self:getTileCoords(), self.universe.player:getTileCoords()) < 10 then
+            self:changeState("seek")
+        else
+            self:changeState("wander")
+        end
+    end
+    if not self.destiny then
+        self.destiny = self.level:randTile()
+    end
+    local tile
+	if #self.dirStack == 0 then
+        repeat
+            self.destiny = self.level:randTile()
+            tile = self.level.tileTable[self.destiny.x][self.destiny.y]
+        until not tile:match(actor.Actor.blocks)
+        self.dirStack = util.aStar(self, nil)
+		self.lastUpdate = love.timer.getTime()
+    end
 end
 
-function enemy.Enemy:actRestore(self)
-    if self.state == "normal" then
-        if util.l1Norm(self:getTileCoords(), universe.player:getTileCoords()) > 10 then
+function enemy.Enemy:actRestore()
+    print("to restore: " .. self.name .. " " .. self.status)
+    if self.status == "normal" then
+        if util.l1Norm(self:getTileCoords(), self.universe.player:getTileCoords()) > 10 then
+            print("r ->w")
             self:changeState("wander")
         else
+            print("r ->s")
             self:changeState("seek")
         end
     end
@@ -197,11 +235,11 @@ end
 ---------
 
 function enemy.Enemy:seekHeuristic(point) 
-    return util.l1Norm(self:getTileCoords(), universe.player:getTileCoords())
+    return util.l1Norm(self:getTileCoords(), self.universe.player:getTileCoords())
 end
 
 function enemy.Enemy:seekGoalCheck(point)
-    return (util.l1Norm(point, universe.player:getTileCoords()) == 0)
+    return (util.l1Norm(point, self.universe.player:getTileCoords()) == 0)
 end
 
 ---------
@@ -213,7 +251,7 @@ function enemy.Enemy:avoidHeuristic(point)
 end
 
 function enemy.Enemy:avoidGoalCheck(point)
-    return self.wanderGoalCheck(point)
+    return self:wanderGoalCheck(point)
 end
 
 ---------
@@ -250,7 +288,7 @@ function enemy.Enemy:goalCheck(point)
     elseif self.state == "seek" then
         return self:seekGoalCheck(point)
     elseif self.state == "avoid" then
-        return self:GoalCheck(point)
+        return self:avoidGoalCheck(point)
     else
         return self:restoreGoalCheck(point)
     end
@@ -261,7 +299,7 @@ function enemy.Enemy:proxOthers(point)
     local dist
     for _,ghost in ipairs(self.universe.enemies) do
         if ghost.name ~= self.name then
-            dist = util.l1Norm(point, ghost:getTileCoords)
+            dist = util.l1Norm(point, ghost:getTileCoords())
             sum = sum + dist
         end
     end
@@ -271,9 +309,9 @@ end
 function enemy.Enemy:eval(point)
     local proxFactor = 0
     if self.state == "wander" or self.state == "seek" then
-        proxFactor = 5*self:proxOthers(point)
+        proxFactor = 1005*self:proxOthers(point)
     end
-    return self.heuristic(point) + proxFactor
+    return self:heuristic(point) + proxFactor
 end
 
 return enemy

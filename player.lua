@@ -35,20 +35,20 @@ player.costTable =
 
 function player.Player:toEat()
 	self.state = "eat"
-	dbg_print("EAT")
-	self.dirStack = util.aStar(self)
+	--dbg_print("EAT")
+	self.dirStack = util.aStar(self, 10)
 end
 
 function player.Player:toRun()
 	self.state = "run"
-	dbg_print("RUN")
-	self.dirStack = util.aStar(self)
+	--dbg_print("RUN")
+	self.dirStack = util.aStar(self, 3)
 end
 
 function player.Player:toHunt()
 	self.state = "hunt"
-	dbg_print("HUNT")
-	self.dirStack = util.aStar(self)
+	--dbg_print("HUNT")
+	self.dirStack = util.aStar(self, 5)
 end
 
 function player.Player:_init(name, universe, level, tileW, tileH, x, y, speed, img)
@@ -111,7 +111,7 @@ function player.Player:update(dt)
         self.nextStep = table.remove(self.dirStack)
     end
     if #self.dirStack == 0 then
-        self.dirStack = util.aStar(self)
+        self.dirStack = util.aStar(self, 5)
     end
     self:move(dt)
     self.animations[self.status]:update(dt)

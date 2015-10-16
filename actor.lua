@@ -94,25 +94,22 @@ function actor.Actor:neighbors(point)
 end
 
 function actor.Actor:move(dt)
-    if self.name ~= "luaman" then
-        util.verbose = false
-    end
     local dx, dy = 0, 0
     if not self.nextStep then
         return
     end
     self.dir = self.nextStep.dir
     if not self:checkDir(self.dir) then
-        dbg_print("FAIL")
+        --dbg_print("FAIL")
     end
-    dbg_print(self.name .. "========== " .. dt)
+    --dbg_print(self.name .. "========== " .. dt)
     dt = math.min(dt, 1/self.speed)
-    dbg_print(self.nextStep.dir)
-    dbg_print("mark: " .. util.phash(self.nextStep.mark))
+    --dbg_print(self.nextStep.dir)
+    --dbg_print("mark: " .. util.phash(self.nextStep.mark))
     local now = {x = self.x + self.ox, y = self.y + self.oy}
-    dbg_print("now: " .. util.phash(now))
+    --dbg_print("now: " .. util.phash(now))
     if util.point_equal(self.nextStep.mark, {x = self.x + self.ox, y = self.y + self.oy}, 2) then
-        dbg_print("Done")
+        --dbg_print("Done")
         self.x = self.nextStep.mark.x - self.ox
         self.y = self.nextStep.mark.y - self.oy
         self.world:update(self, self.x, self.y)
@@ -122,15 +119,14 @@ function actor.Actor:move(dt)
         dy = util.dirs[self.dir].y * self.speed * dt
     end
 	local goalX, goalY = self.x + dx, self.y + dy
-    dbg_print("goal: " .. util.phash({x = goalX + self.ox, y = goalY + self.oy}))
+    --dbg_print("goal: " .. util.phash({x = goalX + self.ox, y = goalY + self.oy}))
 
   	local tx, ty, cols, len = self.world:move(self, goalX, goalY, self.collide)
-    dbg_print("final: " .. util.phash({x = tx + self.ox, y = ty + self.oy}))
+    --dbg_print("final: " .. util.phash({x = tx + self.ox, y = ty + self.oy}))
  	self.x, self.y = tx, ty
   	-- deal with the collisions
   	self:handleCollisions(cols, len)
-    dbg_print("==========" .. self.name)
-    util.verbose = true
+    --dbg_print("==========" .. self.name)
 end
 
 -- Collisions

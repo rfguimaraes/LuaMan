@@ -30,11 +30,8 @@ function dbg_print(text)
     end
 end
 
-function util.aStar(indv)
-    if indv.name ~= "luaman" then
-        util.verbose = false
-    end
-	dbg_print(" A*-----------------")
+function util.aStar(indv, steps)
+	--dbg_print(" A*-----------------")
 	start = indv:getTileCoords()
     if indv.nextStep then
         start = indv.level:curTile(indv.nextStep.mark.x, indv.nextStep.mark.y)
@@ -48,8 +45,8 @@ function util.aStar(indv)
 	ancestor[util.phash(start)] = nil
 	accum[util.phash(start)] = 0
 
-	dbg_print("START")
-	dbg_print(util.phash(start))
+	--dbg_print("START")
+	--dbg_print(util.phash(start))
 	--print(indv:huntHeuristic(start))
 
 	while not fringe:empty() do
@@ -57,8 +54,8 @@ function util.aStar(indv)
 		cur = fringe:getNext()
 		--print(util.phash(cur))
 		if indv:goalCheck(cur) and util.phash(cur) ~= util.phash(start) then
-			dbg_print("GOAL")
-			dbg_print(util.phash(cur))
+			--dbg_print("GOAL")
+			--dbg_print(util.phash(cur))
 			break
 		end
 		--print("neigh:")
@@ -96,20 +93,22 @@ function util.aStar(indv)
         if ancestor[util.phash(cur)] then
             ances = util.phash(ancestor[util.phash(cur)])
         end
-        dbg_print(ances .. " D: " .. data.dir .. " until: " .. util.phash(cur) .. "/" .. util.phash(data.mark))
+        --dbg_print(ances .. " D: " .. data.dir .. " until: " .. util.phash(cur) .. "/" .. util.phash(data.mark))
 		table.insert(path, data)
 		-- dbg_print(dir)
 		cur = ancestor[util.phash(cur)]
 	end
 	-- dbg_print(">>>>>>>>>>>>>END<<<<<<<<<<<<<<<")
 
-	dbg_print(" -----------------A*")
-    res = {}
-    for v = math.max(1, #path - 5),#path,1 do
-        table.insert(res, path[v])
+	--dbg_print(" -----------------A*")
+    if steps ~= nil then
+        res = {}
+        for v = math.max(1, #path - steps),#path,1 do
+            table.insert(res, path[v])
+        end
+        return res
     end
-    util.verbose = true
-    return res
+    return path
 end
 
 return util
