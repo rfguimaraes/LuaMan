@@ -99,7 +99,8 @@ function actor.Actor:move(dt)
     if not self:checkDir(self.dir) then
         dbg_print("FAIL")
     end
-    dbg_print(self.name .. "==========")
+    dbg_print(self.name .. "========== " .. dt)
+    dt = math.min(dt, 1/self.speed)
     dbg_print(self.nextStep.dir)
     dbg_print("mark: " .. util.phash(self.nextStep.mark))
     local now = {x = self.x + self.ox, y = self.y + self.oy}
