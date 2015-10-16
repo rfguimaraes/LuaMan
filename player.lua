@@ -37,26 +37,22 @@ function player.Player:toEat()
 	self.state = "eat"
 	dbg_print("EAT")
 	self.dirStack = util.aStar(self)
-	self.init = true
 end
 
 function player.Player:toRun()
 	self.state = "run"
 	dbg_print("RUN")
 	self.dirStack = util.aStar(self)
-	self.init = true
 end
 
 function player.Player:toHunt()
 	self.state = "hunt"
 	dbg_print("HUNT")
 	self.dirStack = util.aStar(self)
-	self.init = true
 end
 
 function player.Player:_init(name, universe, level, tileW, tileH, x, y, speed, img)
-	actor.Actor._init(self, name, universe.world, level, "player", tileW, tileH, x, y, speed, img)
-	self.universe = universe
+	actor.Actor._init(self, name, universe, level, "player", tileW, tileH, x, y, speed, img)
 	self:initAnims()
 	self.energy = 0
 	self.gotPill = false

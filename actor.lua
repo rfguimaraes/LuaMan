@@ -9,13 +9,14 @@ actor.Actor.blocks = "[w#]"
 
 -- Initialization
 
-function actor.Actor:_init(name, world, level, ctype, tileW, tileH, x, y, speed, img)
+function actor.Actor:_init(name, universe, level, ctype, tileW, tileH, x, y, speed, img)
     self.name = name
 	self.ctype = ctype
 
 	self.tileW, self.tileH = tileW, tileH
 	self.x, self.y = x, y
-	self.world = world
+	self.universe = universe
+	self.world = self.universe.world
 	self.level = level
 	self.world:add(self, x, y, tileW, tileH)
 	
@@ -59,6 +60,11 @@ end
 
 function actor.Actor:getTileCoords()
 	return self.level:curTile(self.x + self.ox, self.y + self.oy)
+end
+
+function actor.Actor:getPos()
+    local pos = {self.x + self.ox, self.y + self.oy}
+    return pos
 end
 
 function actor.Actor:checkDir(dir)

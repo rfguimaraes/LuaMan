@@ -24,14 +24,23 @@ enemy.fsm_table =
     {"restore", "player_far", "wander", nil}
 }
 
-function enemy.Enemy:_init(name, world, level, tileW, tileH, x, y, speed, img, index)
+function enemy.enemy:changeState(state)
+    self.state = state
+    dbg_print(state)
+    self.dirStack = util.aStar(self)
+end
+
+function enemy.Enemy:_init(name, universe, level, tileW, tileH, x, y, speed, img, index)
     self.name = name
-	actor.Actor._init(self, name, world, level, "enemy", tileW, tileH, x, y, speed, img)
+	actor.Actor._init(self, name, universe, level, "enemy", tileW, tileH, x, y, speed, img)
 	self.index = index
 	self:initAnims()
 	self.lastUpdate = love.timer.getTime()
+    self.fsm = fsm.FSM("wander", enemy.fsm_table)
+    -- move this to actWander?
     self.destiny = self.level:randTile()
     self.dirStack = util.aStar(self)
+    self:changeState("wander")
 end
 
 function enemy.Enemy:initAnims()
@@ -77,6 +86,17 @@ function enemy.Enemy:neighbors(point)
 end
 
 function enemy.Enemy:act()
+end
+
+function enemy.Enemy:actWander()
+    if self.status == "eye" then
+        self:changeState("restore")
+    elseif self.status == "fear" then
+        self:changeState("avoid")
+    elseif util.l1Norm(self:getTileCoords(), universe.player:getTileCoords()) < 5 then
+        self:changeState(seek)
+    end
+
     local tile
 	if #self.dirStack == 0 then
         repeat
@@ -86,6 +106,30 @@ function enemy.Enemy:act()
         self.dirStack = util.aStar(self)
 		self.lastUpdate = love.timer.getTime()
 	end
+end
+
+function enemy.Enemy:actSeek()
+    if self.status == "eye" then
+        self:changeState("restore")
+    elseif self.status == "fear" then
+        self:changeState("avoid")
+    elseif util.l1Norm(self:getTileCoords(), universe.player:getTileCoords()) > 10 then
+        self:changeState("wander")
+    end
+end
+
+function enemy.Enemy:actAvoid(self)
+    return self:actWander(self)
+end
+
+function enemy.Enemy:actRestore(self)
+    if self.state == "normal" then
+        if util.l1Norm(self:getTileCoords(), universe.player:getTileCoords()) > 10 then
+            self:changeState("wander")
+        else
+            self:changeState("seek")
+        end
+    end
 end
 
 function enemy.Enemy:onFear()
@@ -139,6 +183,8 @@ function enemy.Enemy:kill()
 		self.status = "eye"
 	end
 end
+
+---------------------------
 
 function enemy.Enemy:goalCheck(point)
     return util.phash(point) == util.phash(self.destiny)

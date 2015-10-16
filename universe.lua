@@ -55,7 +55,7 @@ function universe.Universe:parseEnemy(tile, tx, ty)
         p = "pinky",
         c = "clyde"
     }
-	local e = enemy.Enemy(names[tile], self.world, self.level, self.level.tileW, self.level.tileH, x, y, 60, db.img.enemy, enemyIndex[tile])
+	local e = enemy.Enemy(names[tile], self, self.level, self.level.tileW, self.level.tileH, x, y, 60, db.img.enemy, enemyIndex[tile])
 	if tile ~= "b" then
 		self:parseSpawn(tx, ty)
 	end
