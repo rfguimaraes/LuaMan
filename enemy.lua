@@ -186,12 +186,94 @@ end
 
 ---------------------------
 
-function enemy.Enemy:goalCheck(point)
+function enemy.Enemy:wanderHeuristic(point)
+    return 0
+end
+
+function enemy.Enemy:wanderGoalCheck(point)
     return util.phash(point) == util.phash(self.destiny)
 end
 
+---------
+
+function enemy.Enemy:seekHeuristic(point) 
+    return util.l1Norm(self:getTileCoords(), universe.player:getTileCoords())
+end
+
+function enemy.Enemy:seekGoalCheck(point)
+    return (util.l1Norm(point, universe.player:getTileCoords()) == 0)
+end
+
+---------
+
+function enemy.Enemy:avoidHeuristic(point)
+    --local per = 2*(self.level.width+self.level.height)
+    --return util.l1Norm(point, universe.player:getTileCoords())
+    return self:wanderHeuristic(point)
+end
+
+function enemy.Enemy:avoidGoalCheck(point)
+    return self.wanderGoalCheck(point)
+end
+
+---------
+
+function enemy.Enemy:restoreHeuristic(point)
+    local mapCenter = {}
+    mapCenter.x = math.floor(self.level.width/2)
+    mapCenter.y = math.floor(self.level.height/2)
+    return util.l1Norm(point, mapCenter)
+end
+
+function enemy.Enemy:restoreGoalCheck(point)
+    local data = self.level.tileTable[point.x][point.y]
+    return data:match("[eipc]")
+end
+
+---------
+
+function enemy.Enemy:heuristic(point)
+    if self.state == "wander" then
+        return self:wanderHeuristic(point)
+    elseif self.state == "seek" then
+        return self:seekHeuristic(point)
+    elseif self.state == "avoid" then
+        return self:avoidHeuristic(point)
+    else
+        return self:restoreHeuristic(point)
+    end
+end
+
+function enemy.Enemy:goalCheck(point)
+    if self.state == "wander" then
+        return self:wanderGoalCheck(point)
+    elseif self.state == "seek" then
+        return self:seekGoalCheck(point)
+    elseif self.state == "avoid" then
+        return self:GoalCheck(point)
+    else
+        return self:restoreGoalCheck(point)
+    end
+end
+
+function enemy.Enemy:proxOthers(point)
+    local sum = 0
+    local dist
+    for _,ghost in ipairs(self.universe.enemies) do
+        if ghost.name ~= self.name then
+            dist = util.l1Norm(point, ghost:getTileCoords)
+            sum = sum + dist
+        end
+    end
+    return sum
+end
+
 function enemy.Enemy:eval(point)
-    return 0
+    local proxFactor = 0
+    if self.state == "wander" or self.state == "seek" then
+        proxFactor = 5*self:proxOthers(point)
+    end
+    return self.heuristic(point) + proxFactor
 end
 
 return enemy
