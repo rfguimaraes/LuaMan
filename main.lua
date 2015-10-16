@@ -18,7 +18,6 @@ util.verbose = true
 function love.load(arg)
     local seed = os.time()
     math.randomseed(seed)
-    print("SEED: " .. seed)
 end
 
 -- Every frame

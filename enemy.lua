@@ -26,7 +26,6 @@ enemy.fsm_table =
 
 function enemy.Enemy:changeState(state)
     self.state = state
-    dbg_print(self.name .. ": " .. state)
     self.dirStack = util.aStar(self, 5)
 end
 
@@ -158,13 +157,10 @@ function enemy.Enemy:actAvoid()
 end
 
 function enemy.Enemy:actRestore()
-    print("to restore: " .. self.name .. " " .. self.status)
     if self.status == "normal" then
         if util.l1Norm(self:getTileCoords(), self.universe.player:getTileCoords()) > 10 then
-            print("r ->w")
             self:changeState("wander")
         else
-            print("r ->s")
             self:changeState("seek")
         end
     end
@@ -239,7 +235,7 @@ function enemy.Enemy:seekHeuristic(point)
 end
 
 function enemy.Enemy:seekGoalCheck(point)
-    return (util.l1Norm(point, self.universe.player:getTileCoords()) == 0)
+    return (util.l1Norm(point, self.universe.player:getTileCoords()) <= math.random(0, 5))
 end
 
 ---------
@@ -300,7 +296,9 @@ function enemy.Enemy:proxOthers(point)
     for _,ghost in ipairs(self.universe.enemies) do
         if ghost.name ~= self.name then
             dist = util.l1Norm(point, ghost:getTileCoords())
-            sum = sum + dist
+            if dist < 5 then 
+                sum = sum + dist
+            end
         end
     end
     return sum
@@ -308,10 +306,14 @@ end
 
 function enemy.Enemy:eval(point)
     local proxFactor = 0
-    if self.state == "wander" or self.state == "seek" then
-        proxFactor = 1005*self:proxOthers(point)
-    end
-    return self:heuristic(point) + proxFactor
+    local h
+    -- if self.state == "wander" or self.state == "seek" then
+        proxFactor = self:proxOthers(point)
+        proxFactor = 1000/(proxFactor + 1)
+        proxFactor = proxFactor * proxFactor
+    --end
+    h = self:heuristic(point)
+    return h + proxFactor
 end
 
 return enemy
