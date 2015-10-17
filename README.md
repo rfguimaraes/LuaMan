@@ -4,14 +4,14 @@ A PacMan clone as university assignment.
 
 - View LICENSE file
 - External libraries in lib/ folder.
-- Current release: https://github.com/rfguimaraes/LuaMan/releases/tag/Fase1
+- Current release: https://github.com/rfguimaraes/LuaMan/releases/tag/Fase3
 - Source: https://github.com/rfguimaraes/LuaMan
 
 ======================================
 ## Installation
 
 Check (the very simple) instructions (ie. download, extract, run) at
-the download page: https://github.com/rfguimaraes/LuaMan/releases/tag/Fase1
+the download page: https://github.com/rfguimaraes/LuaMan/releases/tag/Fase3
 
 ## References
 
