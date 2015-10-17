@@ -39,7 +39,7 @@ function universe.Universe:populate()
 			elseif tile == "u" then
 				self:parsePill(x, y)
 			elseif tile == "e" then
-				self:parseSpawn(x, y)
+				--self:parseSpawn(x, y)
 			end
 		end
 	end

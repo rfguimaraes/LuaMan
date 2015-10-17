@@ -221,7 +221,7 @@ end
 ---------------------------
 
 function enemy.Enemy:wanderHeuristic(point)
-    return 0
+    return util.l1Norm(point, self.destiny)
 end
 
 function enemy.Enemy:wanderGoalCheck(point)
@@ -231,11 +231,11 @@ end
 ---------
 
 function enemy.Enemy:seekHeuristic(point) 
-    return util.l1Norm(self:getTileCoords(), self.universe.player:getTileCoords())
+    return util.l1Norm(point, self.universe.player:getTileCoords())
 end
 
 function enemy.Enemy:seekGoalCheck(point)
-    return (util.l1Norm(point, self.universe.player:getTileCoords()) <= math.random(0, 5))
+    return (util.l1Norm(point, self.universe.player:getTileCoords()) <= math.random(1, 5))
 end
 
 ---------
@@ -307,11 +307,9 @@ end
 function enemy.Enemy:eval(point)
     local proxFactor = 0
     local h
-    -- if self.state == "wander" or self.state == "seek" then
-        proxFactor = self:proxOthers(point)
-        proxFactor = 1000/(proxFactor + 1)
-        proxFactor = proxFactor * proxFactor
-    --end
+    proxFactor = self:proxOthers(point)
+    proxFactor = 1/(proxFactor + 1)
+    proxFactor = proxFactor * proxFactor * 1000
     h = self:heuristic(point)
     return h + proxFactor
 end

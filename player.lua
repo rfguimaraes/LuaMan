@@ -295,7 +295,6 @@ function player.Player:runHeuristic(point)
 end
 
 function player.Player:runGoalCheck(point)
-    local sum = 0
     return self:distGhosts(point, 8) == 0
 end
 
