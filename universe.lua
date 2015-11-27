@@ -11,7 +11,6 @@ local universe = {}
 universe.Universe = classer.ncls()
 
 function universe.Universe:_init(gridSize)
-	db.load()
 	self.world = bump.newWorld(gridSize)
 	self.coins = {}
 	self.pills = {}

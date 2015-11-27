@@ -3,6 +3,7 @@ anim8 = require "lib.anim8"
 actor = require "actor"
 fsm = require "fsm"
 util = require "util"
+db = require "db"
 
 local player = {}
 
@@ -114,6 +115,7 @@ function player.Player:handleCollisions(cols, len)
     		cols[i].other:kill()
     		self.score = self.score + 10
     		self.level:setTile(cols[i].other.x, cols[i].other.y, ' ')
+            db.sfx.point:play()
     	elseif cols[i].other.ctype == "pill" then
     		cols[i].other:kill()
     		self.energy = player.MAX_ENERGY
@@ -121,6 +123,7 @@ function player.Player:handleCollisions(cols, len)
     		self.gotPill = true
     		self.score = self.score + 50
     		self.level:setTile(cols[i].other.x, cols[i].other.y, ' ')
+            db.sfx.power:play()
     	elseif cols[i].other.ctype == "enemy" then
     		self:versusEnemy(cols[i].other)
     	end
@@ -129,11 +132,13 @@ end
 
 function player.Player:versusEnemy(enemy)
 	if enemy.status == "normal" then
+        db.sfx.die:play()
 		self:kill()
 		return
 	elseif self.status == "normal" then
 		assert(enemy.status ~= "fear", "Invalid state!\n")
 	elseif enemy.status ~= "eye" then
+        db.sfx.kill:play()
 		self.score = self.score + 100
 	end
 end

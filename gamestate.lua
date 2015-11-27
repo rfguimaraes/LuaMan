@@ -28,14 +28,35 @@ end
 
 gamestate.StartState = classer.ncls(gamestate.GameState)
 
+function gamestate.StartState:_init()
+	gamestate.GameState._init()
+	db.load()
+    self.lastTime = love.timer.getTime()
+    self.intro = {db.img.intro1,
+                  db.img.intro2,
+                  db.img.intro3,
+                  db.img.intro4,
+                  db.img.intro5}
+    self.index = 1
+end
+
 function gamestate.StartState:update(dt)
+    if love.timer.getTime() - self.lastTime > 3 then
+        self.lastTime = love.timer.getTime()
+        self.index = (self.index % #self.intro) + 1
+        gamestate.drawn = false
+    end
 	if not gamestate.inited then
 		gamestate.inited = true
 		gamestate.scene = univ.Universe(16)
 		gamestate.scene:populate()
+        db.bgm.intro:play()
+        db.bgm.game:stop()
 	end
 	if gamestate.switch then
 		gamestate.switch = false
+        db.bgm.intro:stop()
+        db.bgm.game:play()
 		return gamestate.state["playing"]
 	end
 	return gamestate.state["start"]
@@ -43,12 +64,13 @@ end
 
 function gamestate.StartState:draw(dt)
 	gamestate.drawn = true
+    love.graphics.draw(self.intro[self.index], 24, 100)
 	love.graphics.setColor(255, 255, 255, 255)
 	love.graphics.setFont(db.fonts.title);
 	love.graphics.print("LUAMAN", 100, 50)
 	love.graphics.setFont(db.fonts.default);
-	love.graphics.print("Press SPACE to play/pause, Esc to Exit", 50, 300)
-	love.graphics.print("Arrow-keys move the LuaMan", 50, 400)
+	love.graphics.print("Press SPACE to play/pause, Esc to Exit", 50, 400)
+	love.graphics.print("Arrow-keys move the LuaMan", 70, 450)
 end
 
 -----------------------------------------------------------
@@ -58,6 +80,7 @@ gamestate.PlayingState = classer.ncls(gamestate.GameState)
 function gamestate.PlayingState:update(dt)
 	if gamestate.switch then
 		gamestate.switch = false
+        db.bgm.game:pause()
 		return gamestate.state["paused"]
 	end
 	if not gamestate.scene.player.alive then
@@ -84,6 +107,7 @@ gamestate.PausedState = classer.ncls(gamestate.GameState)
 function gamestate.PausedState:update(dt)
 	if gamestate.switch then
 		gamestate.switch = false
+        db.bgm.game:play()
 		return gamestate.state["playing"]
 	end
 	return gamestate.state["paused"]
@@ -106,10 +130,20 @@ end
 
 gamestate.WinState = classer.ncls(gamestate.GameState)
 
+function gamestate.WinState:_init()
+    gamestate.GameState:_init()
+    self.played = false
+end
+
 function gamestate.WinState:update(dt)
+    if not self.played then
+        self.played = true
+        db.sfx.win:play()
+    end
 	if gamestate.switch then
 		gamestate.switch = false
 		gamestate.inited = false
+        self.played = false
 		return gamestate.state["start"]
 	end
 	return gamestate.state["win"]
@@ -134,6 +168,7 @@ function gamestate.LossState:update(dt)
 	if gamestate.switch then
 		gamestate.switch = false
 		gamestate.inited = false
+        db.bgm.game:stop()
 		return gamestate.state["start"]
 	end
 	return gamestate.state["loss"]
