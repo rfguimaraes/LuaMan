@@ -33,24 +33,6 @@ player.costTable =
 	hunt = {["."] = 1, ["u"] = 7, ["?"] = 1, ["ghost"] = 100}
 }
 
-function player.Player:toEat()
-	self.state = "eat"
-	--dbg_print("EAT")
-	self.dirStack = util.aStar(self, 10)
-end
-
-function player.Player:toRun()
-	self.state = "run"
-	--dbg_print("RUN")
-	self.dirStack = util.aStar(self, 3)
-end
-
-function player.Player:toHunt()
-	self.state = "hunt"
-	--dbg_print("HUNT")
-	self.dirStack = util.aStar(self, 5)
-end
-
 function player.Player:_init(name, universe, level, tileW, tileH, x, y, speed, img)
 	actor.Actor._init(self, name, universe, level, "player", tileW, tileH, x, y, speed, img)
 	self:initAnims()
@@ -58,21 +40,9 @@ function player.Player:_init(name, universe, level, tileW, tileH, x, y, speed, i
 	self.gotPill = false
 	self.countdown = 0
 	self.score = 0
-	self.fsm = fsm.FSM("eat", player.fsm_table)
-	self:initRunPoints()
-	self.state = "eat"
-	self.dirStack = {}
-	self:toEat()
-end
-
-function player.Player:initRunPoints()
-	local lw, lh = self.level.width, self.level.height
-	self.runpoints = {}
-	table.insert(self.runpoints, {x = 2, y = 2})
-	table.insert(self.runpoints, {x = 2, y = lh - 1})
-	table.insert(self.runpoints, {x = lw - 1, y = 2})
-	table.insert(self.runpoints, {x = lw - 1, y = lh - 1})
-	table.insert(self.runpoints, math.floor(lw/2), math.floor(lh/2))
+    self.dir = "RIGHT"
+    self.ndir = "RIGHT"
+    self.lastResult = true
 end
 
 function player.Player:initAnims()
@@ -110,59 +80,32 @@ function player.Player:update(dt)
     if not self.nextStep then
         self.nextStep = table.remove(self.dirStack)
     end
-    if #self.dirStack == 0 then
-        self.dirStack = util.aStar(self, 5)
-    end
-    self:move(dt)
+    self.lastResult = self:move(dt)
     self.animations[self.status]:update(dt)
 end
 
 function player.Player:act()
-	-- if love.keyboard.isDown('left','a') then
-	-- 	self.ndir = "LEFT"
-	-- elseif love.keyboard.isDown('right','d') then
-	-- 	self.ndir = "RIGHT"
-	-- elseif love.keyboard.isDown('up','w') then
-	-- 	self.ndir = "UP"
-	-- elseif love.keyboard.isDown('down','s') then
-	-- 	self.ndir = "DOWN"
-	-- end
-
-	if self.state == "eat" then
-		self:actEat()
-	elseif self.state == "run" then
-		self:actRun()
-	else
-		self:actHunt()
+    local goDir = self.dir
+	if love.keyboard.isDown('left','a') then
+		self.ndir = "LEFT"
+    elseif love.keyboard.isDown('right','d') then
+        self.ndir = "RIGHT"
+	elseif love.keyboard.isDown('up','w') then
+		self.ndir = "UP"
+	elseif love.keyboard.isDown('down','s') then
+		self.ndir = "DOWN"
 	end
-end
-
-function player.Player:actEat()
-	if self:minDistGhosts(self:getTileCoords()) < 8 then
-		self:toRun()
-	elseif self.energy > 0.2 * player.MAX_ENERGY then
-		self:toHunt()
-	end
-end
-
-function player.Player:actRun()
-	if self:minDistGhosts(self:getTileCoords()) > 10 then
-		self:toEat()
-	elseif self.energy > 0.2 * player.MAX_ENERGY then
-		self:toHunt()
-	else
-		-- self:toRun()
-	end
-end
-
-function player.Player:actHunt()
-	if self.energy < 0.1 * player.MAX_ENERGY then
-		if self:minDistGhosts(self:getTileCoords()) > 7 then
-			self:toEat()
-		else
-			self:toRun()
-		end
-	end
+    local cur = self:getTileCoords()
+    self.dirStack = {}
+    if self:checkDir(self.ndir) then
+        goDir = self.ndir
+    end
+    if self:checkDir(goDir) then
+        cur.x = cur.x + util.dirs[goDir].x
+        cur.y = cur.y + util.dirs[goDir].y
+        data = {dir = goDir, mark = self.level:tileCenter(cur)}
+        table.insert(self.dirStack, data)
+    end
 end
 
 function player.Player:handleCollisions(cols, len)
@@ -227,151 +170,6 @@ end
 function player.Player:kill()
 	self.status = "die"
 	self.countdown = 0
-end
-
----------------------------
-
-function player.Player:eatHeuristic(point)
-	return 0
-end
-
-function player.Player:eatGoalCheck(point)
-	data = self.level.tileTable[point.x][point.y]
-	return data == '.' or data == 'u'
-end
-
----------
-
-function player.Player:avgDistGhosts(point)
-    return self:distGhosts(point, nil)/#self.universe.enemies
-end
-
-function player.Player:distGhosts(point, limit)
-    local sum = 0
-    for _,ghost in ipairs(self.universe.enemies) do
-        goal = self.level:curTile(ghost.x, ghost.y)
-        local dist = util.l1Norm(point, goal)
-
-        if limit and dist < limit then
-            sum = sum + dist
-        end
-    end
-    return sum
-end
-
-function player.Player:minDistGhosts(point)
-	goals = {}
-	for _, ghost in ipairs(self.universe.enemies) do
-		if ghost.status ~= "eye" then
-			table.insert(goals, self.level:curTile(ghost.x, ghost.y))
-		end
-	end
-	if #goals == 0 then
-		return 0
-	end
-	local min = util.l1Norm(point, goals[1])
-	for _, goal in ipairs(goals) do
-		min = math.min(min, util.l1Norm(point, {x = goal.x, y = goal.y}))
-	end
-	return min
-end
-
-function player.Player:bestRunPoint()
-	goals = self.runpoints
-	local best, max = goals[1], self:avgDistGhosts(goals[1])
-	for _, goal in ipairs(goals) do
-		aux = self:avgDistGhosts(goal)
-		if aux > max then
-			max = aux
-			best = goal
-		end
-	end
-	return best
-end
-
-function player.Player:runHeuristic(point)
-    -- return self:eatHeuristic(point)
-	return util.l1Norm(self:bestRunPoint(), point)
-end
-
-function player.Player:runGoalCheck(point)
-    return self:distGhosts(point, 8) == 0
-end
-
----------
-
-function player.Player:huntHeuristic(point)
-	goals = {}
-	for _, ghost in ipairs(self.universe.enemies) do
-		if ghost.status == "fear" then
-			table.insert(goals, self.level:curTile(ghost.x, ghost.y))
-		end
-	end
-	if #goals == 0 then
-		return self:eatHeuristic(point)
-	end
-	local min = util.l1Norm(point, goals[1])
-	for _, goal in ipairs(goals) do
-		min = math.min(min, util.l1Norm(point, {x = goal.x, y = goal.y}))
-	end
-	return min
-end
-
-function player.Player:huntGoalCheck(point)
-	goals = {}
-	for _, ghost in ipairs(self.universe.enemies) do
-		if ghost.status == "fear" then
-			local tmp = ghost:getTileCoords()
-			table.insert(goals, tmp)
-		end
-	end
-	if #goals == 0 then
-		return self:eatGoalCheck(point)
-	end
-	for _,goal in ipairs(goals) do
-		if util.phash(point) == util.phash({x = goal.x, y = goal.y}) then
-			return true
-		end
-	end
-	return false
-end
-
-----------
-
-function player.Player:heuristic(point)
-	if self.state == "eat" then
-		return self:eatHeuristic(point)
-	elseif self.state == "run" then
-		return self:runHeuristic(point)
-	else
-		return self:huntHeuristic(point)
-	end
-end
-
-function player.Player:goalCheck(point)
-	if self.state == "eat" then
-		return self:eatGoalCheck(point)
-	elseif self.state == "run" then
-		return self:runGoalCheck(point)
-	else
-		return self:huntGoalCheck(point)
-	end
-end
-
-function player.Player:eval(point)
-	local tile = nil
-
-	if self.level.tileTable[point.x][point.y] == "." then
-		tile = "."
-	elseif self.level.tileTable[point.x][point.y] == "u" then
-		tile = "u"
-	else
-		tile = "?"
-	end
-	local contentCost = player.costTable[self.state][tile]
-	local dangerFactor = player.costTable[self.state]["ghost"] * (1/(self:minDistGhosts(point) + 1))
-
-	return self:heuristic(point) + contentCost + dangerFactor
 end
 
 return player

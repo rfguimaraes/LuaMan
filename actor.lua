@@ -28,7 +28,7 @@ function actor.Actor:_init(name, universe, level, ctype, tileW, tileH, x, y, spe
 	self.speed = speed
 	self.tileset = img
 	self.dir = "UP"
-	self.ndir = "UP"
+	self.ndir = nil
 
 	local tilesetH = self.tileset:getHeight()
 	local tilesetW = self.tileset:getWidth()
@@ -67,6 +67,11 @@ function actor.Actor:getPos()
     return pos
 end
 
+function actor.Actor:getTileCenter()
+    local tile = self:getTileCoords()
+    return self.level:tileCenter(tile)
+end
+
 function actor.Actor:checkDir(dir)
 	local c = self.level:lookAround(self.x + self.ox, self.y + self.oy)[dir]
 	return c ~= nil and not c:match(actor.Actor.blocks)
@@ -94,29 +99,32 @@ function actor.Actor:neighbors(point)
 end
 
 function actor.Actor:move(dt)
+    local success = false
     local dx, dy = 0, 0
-    if not self.nextStep then
-        return
-    end
-    self.dir = self.nextStep.dir
-    if not self:checkDir(self.dir) then
-        --dbg_print("FAIL")
-    end
+    --if not self:checkDir(self.nextStep.dir) then
+        --dbg_print(self.name .. " FAIL " .. self.dir)
+        --success = true
+    --end
     --dbg_print(self.name .. "========== " .. dt)
     dt = math.min(dt, 1/self.speed)
     --dbg_print(self.nextStep.dir)
     --dbg_print("mark: " .. util.phash(self.nextStep.mark))
     local now = {x = self.x + self.ox, y = self.y + self.oy}
     --dbg_print("now: " .. util.phash(now))
-    if util.point_equal(self.nextStep.mark, {x = self.x + self.ox, y = self.y + self.oy}, 2) then
-        --dbg_print("Done")
-        self.x = self.nextStep.mark.x - self.ox
-        self.y = self.nextStep.mark.y - self.oy
-        self.world:update(self, self.x, self.y)
-        self.nextStep = nil
+    if self.nextStep then
+        self.dir = self.nextStep.dir
+        if util.point_equal(self.nextStep.mark, {x = self.x + self.ox, y = self.y + self.oy}, 2) then
+            self.x = self.nextStep.mark.x - self.ox
+            self.y = self.nextStep.mark.y - self.oy
+            self.world:update(self, self.x, self.y)
+            self.nextStep = nil
+            success = true
+        else
+            dx = util.dirs[self.dir].x * self.speed * dt
+            dy = util.dirs[self.dir].y * self.speed * dt
+        end
     else
-        dx = util.dirs[self.dir].x * self.speed * dt
-        dy = util.dirs[self.dir].y * self.speed * dt
+        dx, dy = 0, 0
     end
 	local goalX, goalY = self.x + dx, self.y + dy
     --dbg_print("goal: " .. util.phash({x = goalX + self.ox, y = goalY + self.oy}))
@@ -127,6 +135,7 @@ function actor.Actor:move(dt)
   	-- deal with the collisions
   	self:handleCollisions(cols, len)
     --dbg_print("==========" .. self.name)
+    return success
 end
 
 -- Collisions

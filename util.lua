@@ -3,7 +3,7 @@ maze = require "maze"
 
 local util = {}
 
-util.verbose = false
+util.verbose = true
 
 util.dirs = {["RIGHT"] = {x = 1, y = 0},
 	  ["DOWN"] = {x = 0, y = 1}, 
