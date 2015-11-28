@@ -34,7 +34,7 @@ end
 -- Every frame
 function love.draw(dt)
 	curState:draw(dt)
-	love.graphics.print("Current FPS: "..tostring(love.timer.getFPS( )), 10, 10)
+    --love.graphics.print("Current FPS: "..tostring(love.timer.getFPS( )), 10, 10)
 	curState = nextState
 end
 

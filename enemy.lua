@@ -32,6 +32,7 @@ end
 function enemy.Enemy:_init(name, universe, level, tileW, tileH, x, y, speed, img, index)
     self.name = name
 	actor.Actor._init(self, name, universe, level, "enemy", tileW, tileH, x, y, speed, img)
+    self.baseSpeed = speed
 	self.index = index
 	self:initAnims()
 	self.lastUpdate = love.timer.getTime()
@@ -40,6 +41,7 @@ function enemy.Enemy:_init(name, universe, level, tileW, tileH, x, y, speed, img
     self.destiny = self.level:randTile()
     self.dirStack = util.aStar(self, nil)
     self:changeState("wander")
+    self.maxCoins = #universe.coins
 end
 
 function enemy.Enemy:initAnims()
@@ -74,6 +76,8 @@ function enemy.Enemy:update(gotPill, cur, dt)
         self.nextStep = table.remove(self.dirStack)
     end
 	actor.Actor.update(self, dt)	
+    local coef = (self.maxCoins - #self.universe.coins)/self.maxCoins
+    self.speed = self.baseSpeed * (1 + coef * 0.5)
 end
 
 function enemy.Enemy:neighbors(point)

@@ -18,6 +18,7 @@ function universe.Universe:_init(gridSize)
 	self.player = nil
 	self.level = db.lvl[1]
 	self.powerbar = bar.Bar(100, 500, 100, 8, 0)
+    self.maxcoins = 0
 end
 
 -- Populate
@@ -42,6 +43,9 @@ function universe.Universe:populate()
 			end
 		end
 	end
+	for _,e in ipairs(self.enemies) do
+		e.maxCoins = #self.coins
+	end
 end
 
 function universe.Universe:parseEnemy(tile, tx, ty)
@@ -54,7 +58,7 @@ function universe.Universe:parseEnemy(tile, tx, ty)
         p = "pinky",
         c = "clyde"
     }
-	local e = enemy.Enemy(names[tile], self, self.level, self.level.tileW, self.level.tileH, x, y, 60, db.img.enemy, enemyIndex[tile])
+	local e = enemy.Enemy(names[tile], self, self.level, self.level.tileW, self.level.tileH, x, y, 45, db.img.enemy, enemyIndex[tile])
 	if tile ~= "b" then
 		self:parseSpawn(tx, ty)
 	end

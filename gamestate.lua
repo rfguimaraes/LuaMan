@@ -94,9 +94,9 @@ end
 
 function gamestate.PlayingState:draw(dt)
 	if gamestate.scene then
-        local ref = gamestate.scene.player:getTileCoords()
+        local score = gamestate.scene.player.score
 		gamestate.scene:drawAndClean(dt)
-        love.graphics.print("POS: ".. util.phash(ref), 300, 10)
+        love.graphics.print("Score: ".. score, 300, 10)
 	end
 end
 

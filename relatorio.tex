@@ -14,7 +14,7 @@
 \usepackage{amsfonts}
 \usepackage{multirow}
 
-\title{Relatório da Fase 2 do Projeto de MAC5784}
+\title{Relatório da Fase 4 do Projeto de MAC5784}
 \subtitle{LuaMan: um clone de Pac-Man}
 
 \author{Ricardo Ferreira Guimarães \\ 7577650}
@@ -28,10 +28,55 @@
 
 Neste projeto programa-se um jogo similar ao Pac-Man para estudo de aplicação de
 técnicas de inteligência artificial em jogos de computador. Nesta fase em particular,
-o objetivo consiste em tornar os fantasmas agentes inteligentes, isto é, fazê-los terem um comportamento estratégico, em especial de forma emergente.
+o objetivo consiste em tornar o jogo divertido usando diferentes aspectos de economiza comportamental estudados
+em capítulos do livro ``The Upside of Irrationality'' de Dan Ariely.
 
-Para este fim, tem-se a intenção de utilizar conceitos vistos durante o curso a fim
-de construir e avaliar tal comportamento.
+Dos aspectos estudados, escolhi o equilíbrio entre desempenho e recompensa e 
+a impressão de significado. As técnicas e recursos empregados serão detalhados
+nas sessões as seguir.
+
+\section{Equilíbrio entre desempenho e recompensa}
+
+Em um dos capítulos estudados, investiga-se a relação entre recompensa e desempenho,
+que, ao contrário do que se poderia imaginar, não é uma relação direta (o excesso
+de recompensa prejudica o desempenho). Trazendo este conceito para o jogo, ressalta que
+as recompensas que se dá à um jogador, devem ser dadas de acordo com o desempenho do mesmo de forma
+que elas não tornem o jogo muito fácil, ou que sejam insuficientes para compensar as dificuldades pela
+qual ele passa.
+
+Com isso, nota-se que a dificuldade em um jogo deve ser um característica dinâmica, pois
+em um jogo com desafios de mesma intensidade há um grande risco do usuário entediar-se da
+atividade por não encontrar nela algo que o satisfaça (seja por surpresa, por testar novos limites
+de sua habilidade, entre outros).
+
+Em cada jogo diferentes aspectos podem ser modelados para torná-lo gradualmente mais difícil, conforme
+o usuário progride. Em jogos orientados à fases, cada uma provê um desafio novo e/ou de maior intensidade;
+já em jogos mais contínuos esse progresso pode variar com o tempo ou com alguma métrica do rendimento do 
+usuário. No caso do jogo desenvolvido neste trabalho, se houvesse mais fases, estas poderiam aumentar a dificuldade
+mudando a forma do labirinto, alterando-se o número de pílulas de poder, dentre outras formas. Como neste estudo, apenas
+uma fase foi utilizada, para variar a dificuldade altera-se a velocidade dos fantasmas: quanto mais pílulas o personagem
+consegue, mais rápidos os fantasmas ficam.
+
+\section{Impressão de Significado}
+
+Outro aspecto relevante também estudado em aula foi a necessidade que o ser humano tem
+de ter um motivo para executar alguma tarefa. Quanto mais importante o significado daquela
+tarefa for para alguém, maior a disposição dessa pessoa para executar, ou permanecer executando 
+esta tarefa.
+
+No caso de um jogo, o significado real pode não parecer suficiente para que uma pessoa depreenda seu tempo
+na atividade, entretanto, de forma lúdica o jogo auxilia na construção de um significado imaginário,
+com o objetivo de entreter o usuário e deixá-lo o mais imerso possível no mundo do jogo, fazendo com que
+o objetivo no mundo do jogo seja quase tão importante para o jogador, quanto um do mundo real (mesmo que por 
+pouco tempo).
+
+Neste jogo, mantendo o seu aspecto de simplicidade, foram introduzidos dois elementos
+que auxiliam na criação de significado por imersão: a criação de uma história, ainda que simples,
+que caracteriza brevemente os personagens e dá à personagem principal uma razão para sair de sua
+zona de conforto, e a inclusão de elementos sonoros (músicas de fundo e efeitos).
+
+As imagens foram criadas especificamente para este trabalho, mas os arquivos de áudio foram obtidos 
+em \url{opengameart.org}, mais detalhes sobre a licença e autoria nos arquivos \texttt{assets/sounds/bgm/LICENSE} e \texttt{assets/sounds/sfx/LICENSE}.
 
 \section{Algoritmos e Técnicas Empregados}
 
@@ -45,34 +90,34 @@ muito extensas e de difícil integração com o código existente.
 Já para os fantasmas as ideias de \textit{heat map} e autômato celular não foram empregadas
 por dificuldade em encaixá-las no modelo já criado para os atores.
 
-Do ponto de vista do LuaMan, o objetivo final do brinquedo desenvolvido é que o
-personagem principal coma todas pílulas, sem ser pego pelos fantasmas, e em segundo plano, que coma alguns fantasmas quando for seguro ou conveniente. 
-Para este fim, foram pensados três estados de comportamento, que trabalham em conjunto para atingir o objetivo final:
-
-\begin{itemize}
-	\item \textit{eat:} Neste estado, o Pac-Man tem por objetivo principal comer os itens do mapa.
-	\item \textit{run:} Estado em que o Pac-Man foge dos fantasmas ``ativos''.
-	\item \textit{hunt:} Quando o Pac-Man come um pílula de poder e passa a caçar os fantasmas.
-\end{itemize}
-
-Em todos os estados utiliza-se o algoritmo A* para formular um rota (ou plano) para o LuaMan,
-o que muda entre eles são: a função heurística, a função de avaliação de um nó e a verificação
-de objetivo. Quando o Pac-Man atinge um objetivo ou muda de estado gera-se um novo plano, de acordo como estado do autômato.
-
-Já do ponto de vista dos fantasmas, seu único objetivo é o de capturar o LuaMan. Para que não acontecesse de todos eles ficarem sempre juntos
-e perseguindo o LuaMan por um mesmo caminho sempre e para que tivessem um comportamento que pode ser considerado inteligente,
-foram pensados quatro estados possíveis para este tipo de entidade:
-
-\begin{itemize}
-	\item \textit{wander:} Neste estado, o fantasma vai para um ponto qualquer do mapa.
-	\item \textit{seek:} Estado no qual o fantasma persegue o LuaMan.
-	\item \textit{avoid:} Quando o LuaMan come um pílula de poder, os fantasmas entram em ``pânico'' e deixam de perseguir o LuaMan.
-	\item \textit{restore:} Após ser comido pelo LuaMan, um fantasma deve retornar ao centro do mapa para se recuperar.
-\end{itemize}
+%Do ponto de vista do LuaMan, o objetivo final do brinquedo desenvolvido é que o
+%personagem principal coma todas pílulas, sem ser pego pelos fantasmas, e em segundo plano, que coma alguns fantasmas quando for seguro ou conveniente. 
+%Para este fim, foram pensados três estados de comportamento, que trabalham em conjunto para atingir o objetivo final:
+%
+%\begin{itemize}
+%	\item \textit{eat:} Neste estado, o Pac-Man tem por objetivo principal comer os itens do mapa.
+%	\item \textit{run:} Estado em que o Pac-Man foge dos fantasmas ``ativos''.
+%	\item \textit{hunt:} Quando o Pac-Man come um pílula de poder e passa a caçar os fantasmas.
+%\end{itemize}
+%
+%Em todos os estados utiliza-se o algoritmo A* para formular um rota (ou plano) para o LuaMan,
+%o que muda entre eles são: a função heurística, a função de avaliação de um nó e a verificação
+%de objetivo. Quando o Pac-Man atinge um objetivo ou muda de estado gera-se um novo plano, de acordo como estado do autômato.
+%
+%Já do ponto de vista dos fantasmas, seu único objetivo é o de capturar o LuaMan. Para que não acontecesse de todos eles ficarem sempre juntos
+%e perseguindo o LuaMan por um mesmo caminho sempre e para que tivessem um comportamento que pode ser considerado inteligente,
+%foram pensados quatro estados possíveis para este tipo de entidade:
+%
+%\begin{itemize}
+%	\item \textit{wander:} Neste estado, o fantasma vai para um ponto qualquer do mapa.
+%	\item \textit{seek:} Estado no qual o fantasma persegue o LuaMan.
+%	\item \textit{avoid:} Quando o LuaMan come um pílula de poder, os fantasmas entram em ``pânico'' e deixam de perseguir o LuaMan.
+%	\item \textit{restore:} Após ser comido pelo LuaMan, um fantasma deve retornar ao centro do mapa para se recuperar.
+%\end{itemize}
 
 \subsection{Algoritmo A*}
 
-Para guiar o LuaMan e os fantasmas até seus variados objetivos, escolheu-se implementar um A* relativamente simples. Neste algoritmo, faz-se uma busca expandindo os nós de menor custo da origem, até algum
+Para guiar os fantasmas até seus variados objetivos, escolheu-se implementar um A* relativamente simples. Neste algoritmo, faz-se uma busca expandindo os nós de menor custo da origem, até algum
 objetivo (podem ser um ou mais nós). Ele faz isso avaliando o custo determinístico (gasto até o momento) e o custo esperado até o objetivo (custo heurístico).
 
 Além de ser comumente utilizado em jogos e ser  de implementação consideravelmente simples
@@ -80,79 +125,79 @@ Além de ser comumente utilizado em jogos e ser  de implementação consideravel
 poder incluir valores a mais nos cálculos dos custos, como será explicitado posteriormente para
 cada estado dos autômatos que controlam o comportamento do LuaMan e dos fantasmas.
 
-\section{Comportamento do LuaMan}
-
-\subsection{Estado \textit{Eat}}
-
-Neste estado o objetivo é bem simples: chegar à pílula (simples ou de poder), mais próxima.
-Assim, considera-se um nó (ladrilho do jogo), um destino, se ele contém alguma pílula.
-
-Entretanto, ao utilizar o A*, não encontrou-se uma heurística adequada (lembrando
-que a função básica de avaliação do custo é f(n) = g(n) + h(n), onde h(n) é um heurística,
-preferencialmente admissível). Isto pois, em um dado estado, teria de se saber como está a
-distribuição de pílulas no mapa, o que poderia ser muito custoso para ser calculado em
-um ciclo do jogo. Por estas razões a heurística básica é h(n) = 0.
-
-Para fazer com que o Pac-Man evitasse os fantasmas foi adicionado um ``fator de risco'',
-calculado pela fórmula $dangerFactor(n) =  \frac{\alpha_{eat}}{\text{distância mínima até um fantasma ativo}}$. Atualmente, $\alpha_{eat} = 100$ (quanto maior, mais distância o LuaMan
-tentará manter dos fantasmas).
-
-E com objetivo de diferenciar os nós pelo conteúdo, adiciona-se mais custo: ``custo de conteúdo'',
-ele vale 0, se a célula contém uma pílula comum, 5 para pílula de energia e 2 para piso vazio; isto
-faz com que o A*, ao tentar minimizar custos, produza caminhos com mais pílulas, mas com certa economia da pílula de energia.
-
-Assim, para o A* define-se a função heurística neste estado por:
-$h_{eat}(n) = h(n) + dangerFactor(n) + contentCost(n)$
-
-Se um fantasma ativo chega a menos de uma distância de 8 unidades (norma L1), muda-se
-para o estado \textit{run}. Ao pegar a pílula de poder, muda-se para o estado \textit{hunt}.
-
-\subsection{Estado \textit{Run}}
-
-Neste estado quer-se apenas fugir de todos os fantasmas. Em contraste com o estado anterior,
-ainda querendo aproveitar o A*, há várias funções heurísticas possíveis para se avaliar um nó:
-distância mínima até um fantasma, distância média até os fantasmas, fator de ramificação, entre outras. Entretanto, não encontrou-se uma função simples que caracterizasse um nó objetivo, as estratégias relativamente sofisticadas envolviam calcular o valor de distâncias para 
-cada um dos nós, e aqueles com valor máximo seriam objetivo, mas isto poderia se mostrar custoso
-computacionalmente. 
-
-Assim, usando a geometria do mapa, foram fixados 5 pontos, chamados ``pontos de fuga'', são eles:
-os quatro cantos e o centro do mapa. Nos testes, estes se mostraram suficiente para que o LuaMan
-possa escolher para onde fugir, escolhendo, a cada iteração, o melhor entre eles (neste caso, aquele
-que minimize a distância média até os fantasmas).
-
-Até a fase 2, a função objetivo verificava se o nó era o melhor ponto de fuga, agora ela verifica se todos os fantasmas estão a pelo menos 8
-unidades de distância do nó. Isto fez com que o LuaMan fosse mais flexível em sua fuga e evitava movimentos perigosos quando tentava-se mover
-em direção a um ponto de fuga.
-
-Para melhorar a capacidade de fuga, a cada movimento do LuaMan neste estado o plano inteiro é recalculado.
- Mesmo assim, a eficiência do jogo não foi demasiadamente comprometida (não houveram
-diferenças perceptíveis na taxa de quadros).
-
-Assim como no estado \textit{eat}, este também conta com um ``fator de risco'':
-
-$dangerFactor(n) =  \frac{\alpha_{run}}{\text{distância mínima até um fantasma ativo}}$
-
-(atualmente $\alpha_{run} = 1500$); e um ``custo de conteúdo'': valendo 2 para pílula comum ou piso vazio, e 0 para pílula de poder (isto para simular uma ``intenção de contra-ataque'', caso uma boa oportunidade surja).
-
-Assim, para o A* define-se a função heurística neste estado por:
-
-$h_{run}(n) = \min{L1(n, goals)} + dangerFactor(n) + contentCost(n)$
-
-Deste estado, vai-se para \textit{eat}, se os fantasmas ficarem a mais de 10 unidades de distância (norma L1) e vai para \textit{hunt} ao pegar uma pílula de poder.
-
-\subsection{Estado \textit{Hunt}}
-
-Neste estado, sabidamente, o LuaMan está invulnerável e seu objetivo é caçar fantasmas, até que sua
-energia esteja em um nível baixo (20\%, atualmente). Felizmente, tanto a função de verificação
-de objetivo, quanto a função heurística foram facilmente determinadas:
-uma célula é objetivo se contém um fantasma ativo, e a heurística é a distância (norma L1) até o fantasma mais próximo.
-
-Neste caso, não faz sentido tem um ``fator de perigo'', mas ainda assim, utiliza-se o ``custo de conteúdo'' para priorizar caminhos com pílulas e evitar pegar outra pílula de energia, enquanto a
-o nível de poder ainda está alto. Portanto, os custos escolhidos foram: 1 para piso ou pílula comum e 7 para pílula de energia.
-
-Assim, para o A* define-se a função heurística neste estado por:
-
-$h_{run}(n) = \min{L1(n, \text{fantasmas ativos}} + contentCost(n)$
+%\section{Comportamento do LuaMan}
+%
+%\subsection{Estado \textit{Eat}}
+%
+%Neste estado o objetivo é bem simples: chegar à pílula (simples ou de poder), mais próxima.
+%Assim, considera-se um nó (ladrilho do jogo), um destino, se ele contém alguma pílula.
+%
+%Entretanto, ao utilizar o A*, não encontrou-se uma heurística adequada (lembrando
+%que a função básica de avaliação do custo é f(n) = g(n) + h(n), onde h(n) é um heurística,
+%preferencialmente admissível). Isto pois, em um dado estado, teria de se saber como está a
+%distribuição de pílulas no mapa, o que poderia ser muito custoso para ser calculado em
+%um ciclo do jogo. Por estas razões a heurística básica é h(n) = 0.
+%
+%Para fazer com que o Pac-Man evitasse os fantasmas foi adicionado um ``fator de risco'',
+%calculado pela fórmula $dangerFactor(n) =  \frac{\alpha_{eat}}{\text{distância mínima até um fantasma ativo}}$. Atualmente, $\alpha_{eat} = 100$ (quanto maior, mais distância o LuaMan
+%tentará manter dos fantasmas).
+%
+%E com objetivo de diferenciar os nós pelo conteúdo, adiciona-se mais custo: ``custo de conteúdo'',
+%ele vale 0, se a célula contém uma pílula comum, 5 para pílula de energia e 2 para piso vazio; isto
+%faz com que o A*, ao tentar minimizar custos, produza caminhos com mais pílulas, mas com certa economia da pílula de energia.
+%
+%Assim, para o A* define-se a função heurística neste estado por:
+%$h_{eat}(n) = h(n) + dangerFactor(n) + contentCost(n)$
+%
+%Se um fantasma ativo chega a menos de uma distância de 8 unidades (norma L1), muda-se
+%para o estado \textit{run}. Ao pegar a pílula de poder, muda-se para o estado \textit{hunt}.
+%
+%\subsection{Estado \textit{Run}}
+%
+%Neste estado quer-se apenas fugir de todos os fantasmas. Em contraste com o estado anterior,
+%ainda querendo aproveitar o A*, há várias funções heurísticas possíveis para se avaliar um nó:
+%distância mínima até um fantasma, distância média até os fantasmas, fator de ramificação, entre outras. Entretanto, não encontrou-se uma função simples que caracterizasse um nó objetivo, as estratégias relativamente sofisticadas envolviam calcular o valor de distâncias para 
+%cada um dos nós, e aqueles com valor máximo seriam objetivo, mas isto poderia se mostrar custoso
+%computacionalmente. 
+%
+%Assim, usando a geometria do mapa, foram fixados 5 pontos, chamados ``pontos de fuga'', são eles:
+%os quatro cantos e o centro do mapa. Nos testes, estes se mostraram suficiente para que o LuaMan
+%possa escolher para onde fugir, escolhendo, a cada iteração, o melhor entre eles (neste caso, aquele
+%que minimize a distância média até os fantasmas).
+%
+%Até a fase 2, a função objetivo verificava se o nó era o melhor ponto de fuga, agora ela verifica se todos os fantasmas estão a pelo menos 8
+%unidades de distância do nó. Isto fez com que o LuaMan fosse mais flexível em sua fuga e evitava movimentos perigosos quando tentava-se mover
+%em direção a um ponto de fuga.
+%
+%Para melhorar a capacidade de fuga, a cada movimento do LuaMan neste estado o plano inteiro é recalculado.
+% Mesmo assim, a eficiência do jogo não foi demasiadamente comprometida (não houveram
+%diferenças perceptíveis na taxa de quadros).
+%
+%Assim como no estado \textit{eat}, este também conta com um ``fator de risco'':
+%
+%$dangerFactor(n) =  \frac{\alpha_{run}}{\text{distância mínima até um fantasma ativo}}$
+%
+%(atualmente $\alpha_{run} = 1500$); e um ``custo de conteúdo'': valendo 2 para pílula comum ou piso vazio, e 0 para pílula de poder (isto para simular uma ``intenção de contra-ataque'', caso uma boa oportunidade surja).
+%
+%Assim, para o A* define-se a função heurística neste estado por:
+%
+%$h_{run}(n) = \min{L1(n, goals)} + dangerFactor(n) + contentCost(n)$
+%
+%Deste estado, vai-se para \textit{eat}, se os fantasmas ficarem a mais de 10 unidades de distância (norma L1) e vai para \textit{hunt} ao pegar uma pílula de poder.
+%
+%\subsection{Estado \textit{Hunt}}
+%
+%Neste estado, sabidamente, o LuaMan está invulnerável e seu objetivo é caçar fantasmas, até que sua
+%energia esteja em um nível baixo (20\%, atualmente). Felizmente, tanto a função de verificação
+%de objetivo, quanto a função heurística foram facilmente determinadas:
+%uma célula é objetivo se contém um fantasma ativo, e a heurística é a distância (norma L1) até o fantasma mais próximo.
+%
+%Neste caso, não faz sentido tem um ``fator de perigo'', mas ainda assim, utiliza-se o ``custo de conteúdo'' para priorizar caminhos com pílulas e evitar pegar outra pílula de energia, enquanto a
+%o nível de poder ainda está alto. Portanto, os custos escolhidos foram: 1 para piso ou pílula comum e 7 para pílula de energia.
+%
+%Assim, para o A* define-se a função heurística neste estado por:
+%
+%$h_{run}(n) = \min{L1(n, \text{fantasmas ativos}} + contentCost(n)$
 
 \section{Comportamento dos Fantasmas}
 
@@ -210,8 +255,8 @@ a qual auxilia o desenvolvimento de jogos utilizando a linguagem Lua.
 
 \subsection{Personagem principal}
 
-%Nesta fase, LuaMan, o personagem principal é controlado pelo jogador utilizando as setas do teclado.
-Nesta fase o personagem principal é controlado por um autômato finito determinístico.
+Nesta fase, LuaMan, o personagem principal é controlado pelo jogador utilizando as setas do teclado.
+%Nesta fase o personagem principal é controlado por um autômato finito determinístico.
 O código responsável está no arquivo \texttt{player.lua}.
 
 \subsection{Inimigos}
@@ -228,7 +273,7 @@ arquivo correspondente (luaman.exe no Windows, run.sh no Linux e luaman.app no M
 \section{Observações}
 
 O código do jogo está disponível em: \url{https://github.com/rfguimaraes/LuaMan}.
-Pacotes para cada sistema operacional estão disponíveis em: \url{https://github.com/rfguimaraes/LuaMan/releases/tag/Fase3}.
+Pacotes para cada sistema operacional estão disponíveis em: \url{https://github.com/rfguimaraes/LuaMan/releases/tag/Fase4}.
 
 \section{Considerações Finais}
 
@@ -243,22 +288,28 @@ Pacotes para cada sistema operacional estão disponíveis em: \url{https://githu
 %em formas mais eficientes de decidir a movimentação do Pac-Man, fazendo pré-processamento do mapa
 %ou limitando a análise apenas dos objetos até uma certa distância dele.
 
-Nesta fase, verificou-se a dificuldade de estabelecer uma coordenação entre agentes,
-principalmente quando quer se restringir a comunicação, em busca de um comportamento emergente
-como acontece muitas vezes no mundo real.
+Nesta fase, nota-se que há vários aspectos do comportamento humano que devem ser
+usados para construir sistemas interativos eficientes, isto é, que sirvam de auxílio de fato
+para as tarefas que foram designados. Em particular no caso de jogos fica claro como elementos
+artísticos podem ser essenciais para construir um objeto que não só seja atraente à priori, mas
+também tenha uso contínuo por um certo público ao criar um vínculo maior entre o objeto e o usuário.
 
-Também nota-se que os fantasmas, apesar de não estarem realmente programados com um conceito de time,
-onde se comunicam, delegam papéis e se diferenciam entre si, dão a impressão de que atuam conjuntamente
-para atingir seu objetivo.
+Ressalta-se também que há inúmeras formas de utilizar os conhecimentos da área de inteligência artificial para melhorar a forma como os sistemas de computação reagem ao comportamento de 
+usuários, tornando-os mais dinâmicos para que se adequem ao perfil daqueles que irão utilizá-lo.
+Em jogos evidencia-se esse fator por meio da dificuldade (entre outras características). Esta, por
+ser um elemento com pelo menos alguma dinamicidade interfere na relação do usuário com o jogo,
+podendo fazer com que o usuário se sinta desafiado, instigado a continuar jogando, satisfeito
+pela sua recompensa; isto é se bem ajustada. Caso contrário, pode levar o jogador à desistir
+permanentemente do jogo por tédio (falta) ou por frustração (excesso).
 
-Como detalhes técnicos, foram corrigidos diversas falhas relacionadas à movimentação e execução do plano.
-Em particular algumas delas ocorriam quando o jogo passava muito tempo no autômato ou no A*. Este evento
-ressalta o aspecto de que a solução de inteligência tem como um requisito funcional o tempo limitado
-entre dois frames de animação (de forma geral).
+Outros aspectos importantes dentre os vistos também poderiam ter sido aplicados na hipótese de maior tempo hábil.
+A impressão de autoria, ou seja, a sensação de que o usuário participa da construção do sistema, poderia ter sido facilmente
+explorada no caso de múltiplas fases, permitindo que um jogador pudesse criar seus próprios mapas. 
+Conforme estudado, sabemos que para que isto obtivesse sucesso, ferramentas de usabilidade simples auxiliares ao jogo teriam
+de ser criadas, de forma à tornar a edição do jogo um atrativo e diminuir também o risco de frustração (mesmo para mapas simples como o utilizado).
 
-Entre melhorias que ainda poderiam ser feitas estão: estabelecer uma estratégia mais bem definida para os fantasmas,
-fazer o LuaMan considerar mais aspectos sobre o ambiente (se está na zona de passagem livre para fantasmas, se está perto
-do ponto de restauração no centro do mapa, etc.), substituir o A* por algum outro algoritmo que não refaça todos os cálculos
-a partir do zero quando refaz um plano (por exemplo, o D* lite).
-
+Analisando o projeto como um todo, conclui-se que jogos consistem em sistemas bastante complexos, nos quais podem ser aplicados conhecimentos
+de inteligência artificial de diversas formas: para resolver aspectos técnicos (busca de caminhos, controle de comportamento) e aspectos ligados à
+aceitação pelo usuário (dificuldade, imersão etc.). Finalmente, ressalta-se que o projeto permitiu ampliar os conhecimentos sobre inteligência artificial
+e sistemas interativos, úteis não somente para jogos de computador, mas para qualquer sistema que envolva seres humanos.
 \end{document}
